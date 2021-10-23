@@ -1,0 +1,4 @@
+default:
+  initial_size: 4.0
+  initial_prob: 0.25
+  default_max_nbinom_size: 20

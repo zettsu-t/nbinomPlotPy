@@ -1,0 +1,22 @@
+include pyproject.toml
+
+# Include the README
+include *.md
+
+# Include the license file
+include LICENSE.txt
+
+# Include setup.py
+include setup.py
+
+# Include the config and data files
+recursive-include config *
+
+# Exclude the launcher file
+recursive-exclude launcher *
+
+# Exclude Docker files and private settings
+recursive-exclude my_notebook *
+exclude docker_build.sh
+exclude docker-compose.yml
+exclude password_digest.txt
