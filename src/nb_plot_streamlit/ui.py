@@ -1,3 +1,7 @@
+"""
+A Streamlit UI
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
@@ -12,7 +16,7 @@ def read_default_config() -> dict:
     @rtype initial_values: dict
     @return: Returns the default config
     """
-    with open("config/config.yml") as file:
+    with open(file="config/config.yml", mode='r', encoding='utf8') as file:
         default_config: dict = yaml.safe_load(file)["default"]
     return default_config
 

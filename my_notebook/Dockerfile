@@ -11,7 +11,7 @@ RUN apt-get install -y google-chrome-stable
 
 USER jovyan
 ENV PATH="/opt/conda/bin:${PATH}"
-RUN pip3 install autopep8 flake8 mypy pep8 pipenv pytest pytest-cov pyyaml py_pkg seleniumbase sphinx sphinx_rtd_theme types-PyYAML types-requests streamlit
+RUN pip3 install autopep8 flake8 mypy pep8 pipenv pylint pytest pytest-cov pyyaml py_pkg seleniumbase sphinx sphinx_rtd_theme types-PyYAML types-requests streamlit
 
 ARG JUPYTER_PASSWORD="sha1:pass-by-build-arg"
 RUN sed -i.bak -e "s/^[# ]*c.NotebookApp.password *=.*/c.NotebookApp.password = ${JUPYTER_PASSWORD}/" /home/jovyan/.jupyter/jupyter_notebook_config.py

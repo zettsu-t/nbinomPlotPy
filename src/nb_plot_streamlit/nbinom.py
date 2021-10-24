@@ -1,3 +1,7 @@
+"""
+A statefull negative binomial distribution
+"""
+
 from typing import Tuple
 import numpy as np
 import pandas as pd
@@ -29,14 +33,14 @@ class NbinomDist:
     def _update(self):
         """Update private variables consistent"""
         self.mu = self.size * (1 - self.prob) / self.prob
-        i: int = 0
+        x_value: int = 0
         accum: float = 0.0
         quantile: float = float(self.quantile)
 
         while accum < quantile:
-            accum = accum + nbinom.pmf(i, self.size, self.prob)
-            i = i + 1
-        self.max_x_plus_one = i
+            accum = accum + nbinom.pmf(x_value, self.size, self.prob)
+            x_value = x_value + 1
+        self.max_x_plus_one = x_value
 
     def _set_quantile(self, quantile: str):
         """

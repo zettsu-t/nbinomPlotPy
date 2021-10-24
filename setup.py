@@ -12,7 +12,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 setup(
     name='nb_plot_streamlit',
     version='0.0.1',
-    description='A sample Streamlit project',
+    description='A sample Streamlit app',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/zettsu-t/nbinomPlotPy',
@@ -36,7 +36,7 @@ setup(
                       'scipy', 'streamlit', 'pyyaml'],
     extras_require={
         'dev': ['check-manifest', 'autopep8', 'flake8', 'mypy', 'pep8',
-                'pipenv', 'pytest', 'pytest-cov', 'py_pkg',
+                'pipenv', 'pylint', 'pytest', 'pytest-cov', 'py_pkg',
                 'sphinx', 'sphinx_rtd_theme',
                 'types-PyYAML', 'types-requests'],
         'test': ['coverage', 'seleniumbase'],

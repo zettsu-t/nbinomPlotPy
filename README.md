@@ -50,6 +50,7 @@ pytest
 pytest --cov=.
 pytest --cov=. --cov-report=html
 flake8
+pylint src/ tests/
 mypy src/nb_plot_streamlit/*.py
 sphinx-quickstart
 sphinx-build source -b html docs/src
