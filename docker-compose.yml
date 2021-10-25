@@ -7,5 +7,7 @@ services:
     ports:
       - 8888:8888
       - 8501:8501
+    environment:
+      - DISPLAY=:99
     volumes:
       - .:/home/jovyan/work

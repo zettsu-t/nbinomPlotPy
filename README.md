@@ -41,11 +41,39 @@ and you can access the nbinomPlotPy app at <http://example.com:8501/>. Note that
 
 The attached `Dockerfile` and `docker-compose.yml` come in handy to make a Docker container to build, test, and run the Streamlit app. See [an introduction to use Python Package Template Project](https://github.com/zettsu-t/create-py-package) for more details.
 
+## Run a headless display
+
+Testing UIs with a headless browser requires a headless display. You can run Xvfb for this purpose. Note that Xvfb runs as root and testing as a user has to share the *DISPLAY* variable and `docker-compose.yml` can hold it.
+
+You can open a shell inside the Docker container
+
+``` bash
+docker ps
+docker exec -it --user root container-ID /bin/bash
+```
+
+and run a headless display as root.
+
+``` bash
+export DISPLAY=:99
+Xvfb -ac -screen 0 1024x768x24 "${DISPLAY}" &
+```
+
 ## Check this app
+
+You can run unit tests, check code, and make documents as a user (jovyan is the default user of jupyter/datascience-notebook).
+
+``` bash
+docker exec -it container-ID /bin/bash
+```
 
 Notice: this app is not compliant with these checking and documentation yet.
 
 ``` bash
+export DISPLAY=:99
+python -m pip install -e .
+yes "" | streamlit run launcher/launch.py &
+# Wait until the Streamlit server is ready
 pytest
 pytest --cov=.
 pytest --cov=. --cov-report=html

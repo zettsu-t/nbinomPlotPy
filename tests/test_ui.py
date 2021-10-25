@@ -11,16 +11,15 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
-from seleniumbase import BaseCase
 
 
-class TestUI(BaseCase):
+class TestUI(unittest.TestCase):
     """Testing the UI"""
 
     def test_basic(self):
         """Open a page and select an item"""
         options = Options()
-        options.add_argument('--headless')
+        options.add_argument("--headless")
         driver = webdriver.Firefox(options=options)
         driver.get("http://localhost:8501")
 
