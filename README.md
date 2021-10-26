@@ -74,7 +74,7 @@ export DISPLAY=:99
 python -m pip install -e .
 yes "" | streamlit run launcher/launch.py &
 # Wait until the Streamlit server is ready
-pytest
+ps ux | grep firefox | awk '{print $2}' | xargs kill; pytest
 pytest --cov=.
 pytest --cov=. --cov-report=html
 flake8
