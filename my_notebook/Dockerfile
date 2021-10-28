@@ -18,5 +18,5 @@ ENV PATH="/opt/conda/bin:${PATH}"
 RUN pip3 install autopep8 flake8 mypy pep8 pipenv pylint pytest pytest-cov pyyaml py_pkg seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
 RUN pip3 install chromedriver-binary-auto
 
-ARG JUPYTER_PASSWORD="sha1:pass-by-build-arg"
-RUN sed -i.bak -e "s/^[# ]*c.NotebookApp.password *=.*/c.NotebookApp.password = ${JUPYTER_PASSWORD}/" /home/jovyan/.jupyter/jupyter_notebook_config.py
+ARG JUPYTER_PASSWORD="sha1:pass-with-build-arg"
+RUN sed -E -i.bak -e "s/^[# ]*c.NotebookApp.password *=.*/c.NotebookApp.password = ${JUPYTER_PASSWORD}/" /home/jovyan/.jupyter/jupyter_notebook_config.py
