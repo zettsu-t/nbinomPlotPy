@@ -2,7 +2,12 @@
 Testing the UI
 """
 
+import os
+import tempfile
+import time
 import unittest
+import nb_plot_streamlit.ui
+import pandas as pd
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -11,31 +16,41 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-XPATH_TOP = "/html/body/div/div[1]/div/div/div/div/"
-XPATH_SIDEBAR = XPATH_TOP + "section[1]/div[1]/div[2]/div[1]/"
-XPATH_SIZE = XPATH_SIDEBAR + "div[1]/div/div/div[1]/div/div"
-XPATH_SIZE_VALUE = XPATH_SIZE + "/div"
-XPATH_PROB = XPATH_SIDEBAR + "div[2]/div/div/div[1]/div/div"
-XPATH_PROB_VALUE = XPATH_PROB + "/div"
-XPATH_MU = XPATH_SIDEBAR + "div[3]/div/div[1]/div[1]/div/input"
-XPATH_MU_DOWN = XPATH_SIDEBAR + "div[3]/div/div[1]/div[2]/button[1]"
-XPATH_MU_UP = XPATH_SIDEBAR + "div[3]/div/div[1]/div[2]/button[2]"
-XPATH_FIX_MU = XPATH_SIDEBAR + "div[4]/div/div/label[2]"
-XPATH_UPDATE = XPATH_SIDEBAR + "div[5]/div/button"
-XPATH_QUANTILES = XPATH_SIDEBAR + "div[6]/div/div"
-XPATH_QUANTILE_INPUT = XPATH_QUANTILES + "/div/div[1]/div[2]/input"
-XPATH_CHART = XPATH_TOP + "section[2]/div/div[1]/div[2]/div/div/div/img"
-XPATH_RESET = XPATH_SIDEBAR + "div[7]/div/button"
-
+XPATH_TOP = '/html/body/div/div[1]/div/div/div/div/'
+XPATH_SIDEBAR = XPATH_TOP + 'section[1]/div[1]/div[2]/div[1]/'
+XPATH_SIZE = XPATH_SIDEBAR + 'div[1]/div/div/div[1]/div/div'
+XPATH_SIZE_VALUE = XPATH_SIZE + '/div'
+XPATH_PROB = XPATH_SIDEBAR + 'div[2]/div/div/div[1]/div/div'
+XPATH_PROB_VALUE = XPATH_PROB + '/div'
+XPATH_MU = XPATH_SIDEBAR + 'div[3]/div/div[1]/div[1]/div/input'
+XPATH_MU_DOWN = XPATH_SIDEBAR + 'div[3]/div/div[1]/div[2]/button[1]'
+XPATH_MU_UP = XPATH_SIDEBAR + 'div[3]/div/div[1]/div[2]/button[2]'
+XPATH_FIX_MU = XPATH_SIDEBAR + 'div[4]/div/div/label[2]'
+XPATH_UPDATE = XPATH_SIDEBAR + 'div[5]/div/button'
+XPATH_QUANTILES = XPATH_SIDEBAR + 'div[6]/div/div'
+XPATH_QUANTILE_INPUT = XPATH_QUANTILES + '/div/div[1]/div[2]/input'
+XPATH_CHART = XPATH_TOP + 'section[2]/div/div[1]/div[2]/div/div/div/img'
+XPATH_RESET = XPATH_SIDEBAR + 'div[7]/div/button'
+XPATH_DOWNLOAD = XPATH_TOP + 'section[2]/div/div[1]/div[3]/div/button'
+XPATH_CHART_SRC = XPATH_TOP + 'section[2]/div/div[1]/div[1]'
 
 class TestUI(unittest.TestCase):
     """Testing the UI"""
 
-    def open_connection(self, url, timeout):
+    def open_connection(self, url, timeout, download_dir):
         """Open a page and select an item"""
 
         options = Options()
         options.add_argument("--headless")
+
+        # https://sqa.stackexchange.com/questions/2197/
+        # how-to-download-a-file-using-seleniums-webdriver
+        options.set_preference("browser.download.folderList", 2)
+        options.set_preference("browser.download.manager.showWhenStarting",
+                               False)
+        options.set_preference("browser.download.dir", download_dir)
+        options.set_preference("browser.helperApps.neverAsk.saveToDisk",
+                               nb_plot_streamlit.ui.DEFAULT_CSV_MIME)
         driver = webdriver.Firefox(options=options)
         driver.get(url)
 
@@ -47,14 +62,20 @@ class TestUI(unittest.TestCase):
 
     def change_quantile(self, driver, timeout):
         """Select the quantile parameter"""
-        wait = WebDriverWait(driver, timeout)
-
+        key = "src"
+        image_element = driver.find_elements(By.XPATH, XPATH_CHART_SRC)[0]
+        old = image_element.get_attribute(key)
         choises = driver.find_elements(By.XPATH, XPATH_QUANTILE_INPUT)[0]
-        choises.send_keys(Keys.DOWN)
+        choises.click()
         choises.send_keys(Keys.DOWN)
         choises.send_keys(Keys.RETURN)
-        wait.until(EC.element_to_be_clickable((By.XPATH, XPATH_QUANTILES)))
-        driver.save_screenshot("screen_shot_second.png")
+        image_element.click()
+
+        for i in range(10):
+            new_attr = image_element.get_attribute(key)
+            if new_attr is not old:
+                break
+            time.sleep(1)
 
     def change_size(self, driver, timeout):
         """Change the size parameter"""
@@ -191,12 +212,38 @@ class TestUI(unittest.TestCase):
         actual_mu = mu_element.get_attribute("value")
         self.assertAlmostEqual(float(actual_mu), 12.0)
 
+    def click_download(self, driver, timeout, n_rows, download_dir):
+        """Reset all parameters"""
+        wait = WebDriverWait(driver, timeout)
+        wait.until(EC.element_to_be_clickable((By.XPATH, XPATH_DOWNLOAD)))
+        driver.find_elements(By.XPATH, XPATH_DOWNLOAD)[0].click()
+        df_filename = os.path.join(download_dir,
+                                   nb_plot_streamlit.ui.DEFAULT_CSV_FILENAME)
+        df = pd.read_csv(df_filename)
+        os.remove(df_filename)
+        self.assertAlmostEqual(df.shape[0], n_rows)
+        self.assertAlmostEqual(df.shape[1], 2)
+
     def test_basic(self):
         """Walk through all inputs"""
-        timeout = 3
+        timeout = 10
         url = "http://localhost:8501"
-        driver = self.open_connection(url=url, timeout=timeout)
-        self.change_quantile(driver=driver, timeout=timeout)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            driver = self.open_connection(url=url, timeout=timeout,
+                                          download_dir=temp_dir)
+            self.click_download(driver=driver, timeout=timeout, n_rows=34,
+                                download_dir=temp_dir)
+
+            self.change_quantile(driver=driver, timeout=timeout)
+            driver.save_screenshot("screen_shot_second.png")
+            self.click_download(driver=driver, timeout=timeout, n_rows=44,
+                                download_dir=temp_dir)
+
+            self.change_quantile(driver=driver, timeout=timeout)
+            driver.save_screenshot("screen_shot_third.png")
+            self.click_download(driver=driver, timeout=timeout, n_rows=54,
+                                download_dir=temp_dir)
+
         self.change_size(driver=driver, timeout=timeout)
         self.change_prob(driver=driver, timeout=timeout)
         self.update_by_size(driver=driver, timeout=timeout)

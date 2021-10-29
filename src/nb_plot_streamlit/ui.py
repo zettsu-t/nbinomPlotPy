@@ -9,6 +9,10 @@ import yaml
 from .nbinom import NbinomDist
 
 
+DEFAULT_CSV_FILENAME = "density.csv"
+DEFAULT_CSV_MIME = "text/csv"
+
+
 def read_default_config() -> dict:
     """
     Read a default config in the config file
@@ -91,5 +95,5 @@ def draw():
     csv = state.get_df()
     st.download_button(label="download",
                        data=csv,
-                       file_name="df.csv",
+                       file_name=DEFAULT_CSV_FILENAME,
                        mime="text/csv")
