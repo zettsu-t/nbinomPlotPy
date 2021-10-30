@@ -22,7 +22,7 @@ jobs:
       - uses: browser-actions/setup-firefox@latest
       - uses: browser-actions/setup-chrome@latest
       - uses: browser-actions/setup-geckodriver@latest
-      - uses: browser-actions/setup-chromedriver@latest
+      - uses: nanasess/setup-chromedriver@master
 
       - name: Start Xvfb
         run: |
