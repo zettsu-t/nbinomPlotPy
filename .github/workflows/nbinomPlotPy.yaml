@@ -35,6 +35,7 @@ jobs:
           python -m pip install .
 
       - name: Start Streamlit Server
+        continue-on-error: true
         run: |
           yes "" | streamlit run launcher/launch.py &
           sleep(10)
