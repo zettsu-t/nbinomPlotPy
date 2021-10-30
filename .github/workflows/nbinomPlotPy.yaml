@@ -25,8 +25,8 @@ jobs:
 
       - name: Install this package
         run: |
-          python setup.py bdist_wheel
-          python -m pip install dist/nb_plot_streamlit-0.0.1-py3-none-any.whl
+          python -m pip install .
+          python -m pip install autopep8 check-manifest coverage flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
 
       - name: Start Streamlit Server
         run: |
