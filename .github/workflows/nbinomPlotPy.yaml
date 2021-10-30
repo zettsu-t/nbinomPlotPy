@@ -44,7 +44,6 @@ jobs:
       - name: Install Xvfb
         run: |
           sudo apt-get install xvfb
-          xvfb-run --auto-servernum npm test
 
       - name: Run Xvfb
         run: |
