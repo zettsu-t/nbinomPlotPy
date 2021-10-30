@@ -46,6 +46,7 @@ jobs:
           sudo apt-get install xvfb
 
       - name: Run Xvfb
+        continue-on-error: true
         run: |
           Xvfb :99 &
           sleep(10)
