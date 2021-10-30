@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      MPLBACKEND: TKAgg
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
