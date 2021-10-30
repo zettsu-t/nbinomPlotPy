@@ -39,7 +39,8 @@ setup(
                 'pipenv', 'pylint', 'py_pkg',
                 'sphinx', 'sphinx_rtd_theme',
                 'types-PyYAML', 'types-requests'],
-        'test': ['coverage', 'opencv-python', 'pytest', 'pytest-cov', 'seleniumbase'],
+        'test': ['coverage', 'opencv-python',
+                 'pytest', 'pytest-cov', 'seleniumbase'],
     },
 
     package_data={

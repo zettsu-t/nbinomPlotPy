@@ -3,7 +3,6 @@ Testing the UI
 """
 
 import glob
-import importlib
 import os
 import subprocess
 import tempfile
@@ -22,7 +21,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import WebDriverException
 import nb_plot_streamlit.ui
 
 
@@ -49,6 +47,7 @@ SNAPSHOT_DIR = "tests/snapshots"
 SNAPSHOT_FILENAME_INITIAL = "screen_shot_initial.png"
 SNAPSHOT_FILENAME_QUANTILE2 = "screen_shot_quantile2.png"
 SNAPSHOT_FILENAME_QUANTILE3 = "screen_shot_quantile3.png"
+
 
 def is_process_alive(proc_name):
     """Check if a process is alive"""
@@ -79,25 +78,22 @@ def open_connection(url, timeout, download_dir, snapshot_dir):
     """Open a page and select an item"""
 
     driver = None
-    if is_process_alive("Xvfb"):
-        try:
-            driver = open_driver(mode="--xvfb", download_dir=download_dir)
-        except WebDriverException:
-            pass
+    if not is_process_alive("Xvfb"):
+        raise ProcessLookupError("No Xvfb process found")
 
-    if driver is None:
-        # Remove matplotlib.use('TKAgg')
-        importlib.reload(matplotlib)
-        driver = open_driver(mode="--headless", download_dir=download_dir)
-
+    driver = open_driver(mode="--xvfb", download_dir=download_dir)
     driver.get(url)
 
     wait = WebDriverWait(driver, timeout)
     wait.until(EC.visibility_of_element_located((By.XPATH, XPATH_CHART)))
-    driver.find_elements(By.XPATH, XPATH_QUANTILES)[0].click()
+    driver.find_elements(By.XPATH, XPATH_CHART)[0].click()
 
+    time.sleep(1)
     snapshot_filename = os.path.join(snapshot_dir, SNAPSHOT_FILENAME_INITIAL)
     driver.save_screenshot(snapshot_filename)
+
+    driver.find_elements(By.XPATH, XPATH_QUANTILES)[0].click()
+
     return driver
 
 
@@ -136,7 +132,8 @@ class TestUI(unittest.TestCase):
         self.assertTrue(len(filenames) > 0)
         for filename in filenames:
             expected = cv2.imread(filename)
-            out_filename = os.path.join(snapshot_dir, os.path.basename(filename))
+            out_filename = os.path.join(
+                snapshot_dir, os.path.basename(filename))
             actual = cv2.imread(out_filename)
             self.assertTrue(np.array_equal(actual, expected))
 
@@ -338,8 +335,7 @@ class TestUI(unittest.TestCase):
                                      download_dir=temp_dir,
                                      snapshot_dir=snapshot_dir)
 
-            if os.environ.get("GITHUB_ACTIONS") is None:
-                self.compare_snapshots(snapshot_dir)
+            self.compare_snapshots(snapshot_dir)
 
         self.change_size(driver=driver, timeout=timeout)
         self.change_prob(driver=driver, timeout=timeout)

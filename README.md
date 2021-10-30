@@ -56,7 +56,7 @@ and run a headless display as root.
 
 ``` bash
 export DISPLAY=:99
-Xvfb -ac -screen 0 1024x768x24 "${DISPLAY}" &
+Xvfb -ac -screen 0 1280x1024x24 "${DISPLAY}" &
 ```
 
 ## Check this app
