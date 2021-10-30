@@ -2,12 +2,14 @@
 Testing the UI
 """
 
+import glob
 import importlib
 import os
 import subprocess
 import tempfile
 import time
 import unittest
+import cv2
 import matplotlib
 # Write this here before importing Selenium and have Pylint ignore this
 matplotlib.use('TKAgg')
@@ -42,6 +44,11 @@ XPATH_RESET = XPATH_SIDEBAR + 'div[7]/div/button'
 XPATH_DOWNLOAD = XPATH_TOP + 'section[2]/div/div[1]/div[3]/div/button'
 XPATH_CHART_SRC = XPATH_TOP + 'section[2]/div/div[1]/div[1]'
 
+EXPECTED_SNAPSHOTS = "tests/data/*.png"
+SNAPSHOT_DIR = "tests/snapshots"
+SNAPSHOT_FILENAME_INITIAL = "screen_shot_initial.png"
+SNAPSHOT_FILENAME_QUANTILE2 = "screen_shot_quantile2.png"
+SNAPSHOT_FILENAME_QUANTILE3 = "screen_shot_quantile3.png"
 
 def is_process_alive(proc_name):
     """Check if a process is alive"""
@@ -68,7 +75,7 @@ def open_driver(mode, download_dir):
     return webdriver.Firefox(options=options)
 
 
-def open_connection(url, timeout, download_dir):
+def open_connection(url, timeout, download_dir, snapshot_dir):
     """Open a page and select an item"""
 
     driver = None
@@ -88,7 +95,9 @@ def open_connection(url, timeout, download_dir):
     wait = WebDriverWait(driver, timeout)
     wait.until(EC.visibility_of_element_located((By.XPATH, XPATH_CHART)))
     driver.find_elements(By.XPATH, XPATH_QUANTILES)[0].click()
-    driver.save_screenshot("screen_shot_initial.png")
+
+    snapshot_filename = os.path.join(snapshot_dir, SNAPSHOT_FILENAME_INITIAL)
+    driver.save_screenshot(snapshot_filename)
     return driver
 
 
@@ -120,23 +129,41 @@ def change_quantile(driver, timeout):
 class TestUI(unittest.TestCase):
     """Testing the UI"""
 
-    def change_quantile_set(self, driver, timeout, download_dir):
+    def compare_snapshots(self, snapshot_dir):
+        """Compare shapshots"""
+
+        filenames = glob.glob(EXPECTED_SNAPSHOTS)
+        self.assertTrue(len(filenames) > 0)
+        for filename in filenames:
+            expected = cv2.imread(filename)
+            out_filename = os.path.join(snapshot_dir, os.path.basename(filename))
+            actual = cv2.imread(out_filename)
+            self.assertTrue(np.array_equal(actual, expected))
+
+    def change_quantile_set(self, driver, timeout, download_dir, snapshot_dir):
         """Change the quantile parameter"""
+
         self.click_download(driver=driver, timeout=timeout, n_rows=34,
                             download_dir=download_dir)
 
         change_quantile(driver=driver, timeout=timeout)
-        driver.save_screenshot("screen_shot_second.png")
+
+        snapshot_filename = os.path.join(
+            snapshot_dir, SNAPSHOT_FILENAME_QUANTILE2)
+        driver.save_screenshot(snapshot_filename)
         self.click_download(driver=driver, timeout=timeout, n_rows=44,
                             download_dir=download_dir)
 
         change_quantile(driver=driver, timeout=timeout)
-        driver.save_screenshot("screen_shot_third.png")
+        snapshot_filename = os.path.join(
+            snapshot_dir, SNAPSHOT_FILENAME_QUANTILE3)
+        driver.save_screenshot(snapshot_filename)
         self.click_download(driver=driver, timeout=timeout, n_rows=54,
                             download_dir=download_dir)
 
     def change_size(self, driver, timeout):
         """Change the size parameter"""
+
         wait = WebDriverWait(driver, timeout)
 
         updated_size = "6.0"
@@ -302,10 +329,16 @@ class TestUI(unittest.TestCase):
         timeout = 30
         url = "http://localhost:8501"
         with tempfile.TemporaryDirectory() as temp_dir:
+            snapshot_dir = SNAPSHOT_DIR
+            os.makedirs(snapshot_dir, exist_ok=True)
             driver = open_connection(url=url, timeout=timeout,
-                                     download_dir=temp_dir)
+                                     download_dir=temp_dir,
+                                     snapshot_dir=snapshot_dir)
             self.change_quantile_set(driver=driver, timeout=timeout,
-                                     download_dir=temp_dir)
+                                     download_dir=temp_dir,
+                                     snapshot_dir=snapshot_dir)
+
+            self.compare_snapshots(snapshot_dir)
 
         self.change_size(driver=driver, timeout=timeout)
         self.change_prob(driver=driver, timeout=timeout)

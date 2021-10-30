@@ -15,7 +15,7 @@ RUN mv chromedriver /usr/local/bin/
 
 USER jovyan
 ENV PATH="/opt/conda/bin:${PATH}"
-RUN pip3 install autopep8 flake8 mypy pep8 pipenv pylint pytest pytest-cov pyyaml py_pkg seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
+RUN pip3 install autopep8 check-manifest coverage flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
 RUN pip3 install chromedriver-binary-auto
 
 ARG JUPYTER_PASSWORD="sha1:pass-with-build-arg"

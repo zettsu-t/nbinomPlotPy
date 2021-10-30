@@ -35,11 +35,11 @@ setup(
     install_requires=['matplotlib', 'numpy', 'pandas',
                       'scipy', 'streamlit', 'pyyaml'],
     extras_require={
-        'dev': ['check-manifest', 'autopep8', 'flake8', 'mypy', 'pep8',
-                'pipenv', 'pylint', 'pytest', 'pytest-cov', 'py_pkg',
+        'dev': ['autopep8', 'check-manifest', 'flake8', 'mypy', 'pep8',
+                'pipenv', 'pylint', 'py_pkg',
                 'sphinx', 'sphinx_rtd_theme',
                 'types-PyYAML', 'types-requests'],
-        'test': ['coverage', 'seleniumbase'],
+        'test': ['coverage', 'opencv-python', 'pytest', 'pytest-cov', 'seleniumbase'],
     },
 
     package_data={
