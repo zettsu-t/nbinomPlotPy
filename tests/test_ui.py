@@ -9,9 +9,16 @@ import tempfile
 import time
 import unittest
 import cv2
-import matplotlib
-# Write this here before importing Selenium and have Pylint ignore this
-matplotlib.use('TKAgg')
+
+# export USE_HEADLESS_BROWSER=1
+# and this uses a headless mode (for local)
+# instead of Xvfb (for GitHub Actions)
+USE_HEADLESS_BROWSER = os.environ.get("USE_HEADLESS_BROWSER") is not None
+if not USE_HEADLESS_BROWSER:
+    import matplotlib
+    # Write this here before importing Selenium and have Pylint ignore this
+    matplotlib.use('TKAgg')
+
 import numpy as np
 import pandas as pd
 from selenium import webdriver
@@ -58,7 +65,7 @@ def is_process_alive(proc_name):
 
 
 def open_driver(mode, download_dir):
-    """Open a headless browserm"""
+    """Open a headless browser"""
 
     options = Options()
     options.add_argument(mode)
@@ -81,7 +88,10 @@ def open_connection(url, timeout, download_dir, snapshot_dir):
     if not is_process_alive("Xvfb"):
         raise ProcessLookupError("No Xvfb process found")
 
-    driver = open_driver(mode="--xvfb", download_dir=download_dir)
+    if USE_HEADLESS_BROWSER:
+        driver = open_driver(mode="--headless", download_dir=download_dir)
+    else:
+        driver = open_driver(mode="--xvfb", download_dir=download_dir)
     driver.get(url)
 
     wait = WebDriverWait(driver, timeout)
@@ -335,6 +345,8 @@ class TestUI(unittest.TestCase):
                                      download_dir=temp_dir,
                                      snapshot_dir=snapshot_dir)
 
+            # export GITHUB_ACTIONS=1
+            # and it skip the check below
             if os.environ.get("GITHUB_ACTIONS") is None:
                 self.compare_snapshots(snapshot_dir)
 

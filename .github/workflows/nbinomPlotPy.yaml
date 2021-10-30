@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      MPLBACKEND: TKAgg
+      USE_HEADLESS_BROWSER: 1
       DISPLAY: :99
     steps:
       - uses: actions/checkout@v2
