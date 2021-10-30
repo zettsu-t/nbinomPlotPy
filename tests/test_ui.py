@@ -338,7 +338,8 @@ class TestUI(unittest.TestCase):
                                      download_dir=temp_dir,
                                      snapshot_dir=snapshot_dir)
 
-#           self.compare_snapshots(snapshot_dir)
+            if os.environ.get("GITHUB_ACTIONS") is None:
+                self.compare_snapshots(snapshot_dir)
 
         self.change_size(driver=driver, timeout=timeout)
         self.change_prob(driver=driver, timeout=timeout)
