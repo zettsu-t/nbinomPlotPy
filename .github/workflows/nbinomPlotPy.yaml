@@ -18,19 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - uses: GabrielBB/xvfb-action@v1
-        with:
-          run: npm test
-          working-directory: ./          
       - uses: browser-actions/setup-firefox@latest
       - uses: browser-actions/setup-chrome@latest
       - uses: browser-actions/setup-geckodriver@latest
       - uses: nanasess/setup-chromedriver@master
-
-      - name: Start Xvfb
-        run: |
-          export DISPLAY=:99
-          sudo Xvfb -ac -screen 0 1024x768x24 :99 > /dev/null 2>&1 &
 
       - name: Install this package
         run: |
