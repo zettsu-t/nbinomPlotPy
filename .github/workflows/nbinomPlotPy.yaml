@@ -1,0 +1,44 @@
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+name: nbinomPlotPy
+
+jobs:
+  nbinomPlotPy:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: GabrielBB/xvfb-action@v1
+      - uses: browser-actions/setup-firefox@latest
+      - uses: browser-actions/setup-chrome@latest
+      - uses: browser-actions/setup-geckodriver@latest
+      - uses: browser-actions/setup-chromedriver@latest
+
+      - name: Start Xvfb
+        run: |
+          export DISPLAY=:99
+          sudo Xvfb -ac -screen 0 1024x768x24 :99 > /dev/null 2>&1 &
+
+      - name: Install this package
+        run: |
+          python setup.py bdist_wheel
+          python -m pip install dist/nb_plot_streamlit-0.0.1-py3-none-any.whl
+
+      - name: Start Streamlit Server
+        run: |
+          yes "" | streamlit run launcher/launch.py &
+          sleep(10)
+
+      - name: Check
+        run: |
+          pytest
