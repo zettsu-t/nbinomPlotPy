@@ -2,11 +2,16 @@
 Testing the UI
 """
 
+import importlib
 import os
+import subprocess
 import tempfile
 import time
 import unittest
-import nb_plot_streamlit.ui
+import matplotlib
+# Write this here before importing Selenium and have Pylint ignore this
+matplotlib.use('TKAgg')
+import numpy as np
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver import ActionChains
@@ -15,6 +20,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import WebDriverException
+import nb_plot_streamlit.ui
+
 
 XPATH_TOP = '/html/body/div/div[1]/div/div/div/div/'
 XPATH_SIDEBAR = XPATH_TOP + 'section[1]/div[1]/div[2]/div[1]/'
@@ -34,48 +42,98 @@ XPATH_RESET = XPATH_SIDEBAR + 'div[7]/div/button'
 XPATH_DOWNLOAD = XPATH_TOP + 'section[2]/div/div[1]/div[3]/div/button'
 XPATH_CHART_SRC = XPATH_TOP + 'section[2]/div/div[1]/div[1]'
 
+
+def is_process_alive(proc_name):
+    """Check if a process is alive"""
+
+    command = f"ps aux | egrep -v grep | egrep -e \\\\b{proc_name}\\\\b"
+    result = subprocess.run(command, shell=True, check=False).returncode
+    return result == 0
+
+
+def open_driver(mode, download_dir):
+    """Open a headless browserm"""
+
+    options = Options()
+    options.add_argument(mode)
+
+    # https://sqa.stackexchange.com/questions/2197/
+    # how-to-download-a-file-using-seleniums-webdriver
+    options.set_preference("browser.download.folderList", 2)
+    options.set_preference("browser.download.manager.showWhenStarting",
+                           False)
+    options.set_preference("browser.download.dir", download_dir)
+    options.set_preference("browser.helperApps.neverAsk.saveToDisk",
+                           nb_plot_streamlit.ui.DEFAULT_CSV_MIME)
+    return webdriver.Firefox(options=options)
+
+
+def open_connection(url, timeout, download_dir):
+    """Open a page and select an item"""
+
+    driver = None
+    if is_process_alive("Xvfb"):
+        try:
+            driver = open_driver(mode="--xvfb", download_dir=download_dir)
+        except WebDriverException:
+            pass
+
+    if driver is None:
+        # Remove matplotlib.use('TKAgg')
+        importlib.reload(matplotlib)
+        driver = open_driver(mode="--headless", download_dir=download_dir)
+
+    driver.get(url)
+
+    wait = WebDriverWait(driver, timeout)
+    wait.until(EC.visibility_of_element_located((By.XPATH, XPATH_CHART)))
+    driver.find_elements(By.XPATH, XPATH_QUANTILES)[0].click()
+    driver.save_screenshot("screen_shot_initial.png")
+    return driver
+
+
+def wait_until_changes(element, key, old_value, timesec):
+    """Wait until an attribute of an HTML tag is updated"""
+
+    for _ in range(timesec):
+        new_value = element.get_attribute(key)
+        if not new_value == old_value:
+            break
+        time.sleep(1)
+
+
+def change_quantile(driver, timeout):
+    """Select the quantile parameter"""
+
+    key = "src"
+    element = driver.find_elements(By.XPATH, XPATH_CHART_SRC)[0]
+    old_value = element.get_attribute(key)
+    choises = driver.find_elements(By.XPATH, XPATH_QUANTILE_INPUT)[0]
+    choises.click()
+    choises.send_keys(Keys.DOWN)
+    choises.send_keys(Keys.RETURN)
+    element.click()
+    wait_until_changes(element=element, key=key, old_value=old_value,
+                       timesec=timeout)
+
+
 class TestUI(unittest.TestCase):
     """Testing the UI"""
 
-    def open_connection(self, url, timeout, download_dir):
-        """Open a page and select an item"""
+    def change_quantile_set(self, driver, timeout, download_dir):
+        """Change the quantile parameter"""
+        self.click_download(driver=driver, timeout=timeout, n_rows=34,
+                            download_dir=download_dir)
 
-        options = Options()
-        options.add_argument("--headless")
+        change_quantile(driver=driver, timeout=timeout)
+        driver.save_screenshot("screen_shot_second.png")
+        self.click_download(driver=driver, timeout=timeout, n_rows=44,
+                            download_dir=download_dir)
 
-        # https://sqa.stackexchange.com/questions/2197/
-        # how-to-download-a-file-using-seleniums-webdriver
-        options.set_preference("browser.download.folderList", 2)
-        options.set_preference("browser.download.manager.showWhenStarting",
-                               False)
-        options.set_preference("browser.download.dir", download_dir)
-        options.set_preference("browser.helperApps.neverAsk.saveToDisk",
-                               nb_plot_streamlit.ui.DEFAULT_CSV_MIME)
-        driver = webdriver.Firefox(options=options)
-        driver.get(url)
-
-        wait = WebDriverWait(driver, timeout)
-        wait.until(EC.visibility_of_element_located((By.XPATH, XPATH_CHART)))
-        driver.find_elements(By.XPATH, XPATH_QUANTILES)[0].click()
-        driver.save_screenshot("screen_shot_initial.png")
-        return driver
-
-    def change_quantile(self, driver, timeout):
-        """Select the quantile parameter"""
-        key = "src"
-        image_element = driver.find_elements(By.XPATH, XPATH_CHART_SRC)[0]
-        old = image_element.get_attribute(key)
-        choises = driver.find_elements(By.XPATH, XPATH_QUANTILE_INPUT)[0]
-        choises.click()
-        choises.send_keys(Keys.DOWN)
-        choises.send_keys(Keys.RETURN)
-        image_element.click()
-
-        for i in range(10):
-            new_attr = image_element.get_attribute(key)
-            if new_attr is not old:
-                break
-            time.sleep(1)
+        change_quantile(driver=driver, timeout=timeout)
+        driver.save_screenshot("screen_shot_third.png")
+        self.click_download(driver=driver, timeout=timeout, n_rows=54,
+                            download_dir=download_dir)
 
     def change_size(self, driver, timeout):
         """Change the size parameter"""
@@ -98,6 +156,7 @@ class TestUI(unittest.TestCase):
 
     def change_prob(self, driver, timeout):
         """Change the prob parameter"""
+
         wait = WebDriverWait(driver, timeout)
 
         updated_prob = "0.75"
@@ -115,8 +174,9 @@ class TestUI(unittest.TestCase):
         self.assertAlmostEqual(float(actual_prob), float(updated_prob))
         prob_slider.click()
 
-    def update_by_size(self, driver, timeout):
+    def update_by_size(self, driver, timeout, expected_mu):
         """Update by the size parameter"""
+
         wait = WebDriverWait(driver, timeout)
 
         old_element = driver.find_elements(By.XPATH, XPATH_MU)[0]
@@ -126,21 +186,25 @@ class TestUI(unittest.TestCase):
 
         mu_element = driver.find_elements(By.XPATH, XPATH_MU)[0]
         actual_mu = mu_element.get_attribute("value")
-        self.assertAlmostEqual(float(actual_mu), 2.0)
+        self.assertAlmostEqual(float(actual_mu), expected_mu)
 
         mu_element_updated = driver.find_elements(By.XPATH, XPATH_MU)[0]
         move = ActionChains(driver)
         move.click_and_hold(mu_element_updated).release().perform()
         wait.until(EC.element_to_be_clickable((By.XPATH, XPATH_MU)))
 
-    def change_mu(self, driver, timeout):
+    def change_mu(self, driver, timeout, expected_mu):
         """Change the mu parameter"""
+
         wait = WebDriverWait(driver, timeout)
 
-        updated_mu = "7.00"
         mu_element = driver.find_elements(By.XPATH, XPATH_MU)[0]
-        driver.execute_script("arguments[0].value = '';", mu_element)
+        actual_mu = mu_element.get_attribute("value")
+        self.assertAlmostEqual(float(actual_mu), expected_mu)
 
+        updated_mu = "7.00"
+        self.assertTrue(np.abs(expected_mu - float(updated_mu)) > 0.5)
+        driver.execute_script("arguments[0].value = '';", mu_element)
         mu_element.send_keys(updated_mu)
         mu_element.send_keys(Keys.RETURN)
         wait.until(EC.element_to_be_clickable((By.XPATH, XPATH_MU)))
@@ -172,6 +236,7 @@ class TestUI(unittest.TestCase):
 
     def update_by_mu(self, driver, timeout):
         """Update by the mu parameter"""
+
         wait = WebDriverWait(driver, timeout)
 
         updated_size = "24.0"
@@ -189,6 +254,7 @@ class TestUI(unittest.TestCase):
 
     def click_reset(self, driver, timeout):
         """Reset all parameters"""
+
         wait = WebDriverWait(driver, timeout)
 
         old_size_element = driver.find_elements(By.XPATH, XPATH_SIZE)[0]
@@ -214,6 +280,7 @@ class TestUI(unittest.TestCase):
 
     def click_download(self, driver, timeout, n_rows, download_dir):
         """Reset all parameters"""
+
         wait = WebDriverWait(driver, timeout)
         wait.until(EC.element_to_be_clickable((By.XPATH, XPATH_DOWNLOAD)))
         driver.find_elements(By.XPATH, XPATH_DOWNLOAD)[0].click()
@@ -221,38 +288,38 @@ class TestUI(unittest.TestCase):
                                    nb_plot_streamlit.ui.DEFAULT_CSV_FILENAME)
         df = pd.read_csv(df_filename)
         os.remove(df_filename)
+
+        # Pylint reports false positive
         self.assertAlmostEqual(df.shape[0], n_rows)
         self.assertAlmostEqual(df.shape[1], 2)
 
     def test_basic(self):
         """Walk through all inputs"""
-        timeout = 10
+
+        if not is_process_alive("streamlit"):
+            raise ProcessLookupError("No Streamlit server found")
+
+        timeout = 30
         url = "http://localhost:8501"
         with tempfile.TemporaryDirectory() as temp_dir:
-            driver = self.open_connection(url=url, timeout=timeout,
-                                          download_dir=temp_dir)
-            self.click_download(driver=driver, timeout=timeout, n_rows=34,
-                                download_dir=temp_dir)
-
-            self.change_quantile(driver=driver, timeout=timeout)
-            driver.save_screenshot("screen_shot_second.png")
-            self.click_download(driver=driver, timeout=timeout, n_rows=44,
-                                download_dir=temp_dir)
-
-            self.change_quantile(driver=driver, timeout=timeout)
-            driver.save_screenshot("screen_shot_third.png")
-            self.click_download(driver=driver, timeout=timeout, n_rows=54,
-                                download_dir=temp_dir)
+            driver = open_connection(url=url, timeout=timeout,
+                                     download_dir=temp_dir)
+            self.change_quantile_set(driver=driver, timeout=timeout,
+                                     download_dir=temp_dir)
 
         self.change_size(driver=driver, timeout=timeout)
         self.change_prob(driver=driver, timeout=timeout)
-        self.update_by_size(driver=driver, timeout=timeout)
-        self.change_mu(driver=driver, timeout=timeout)
+
+        expected_mu = 2.0
+        self.update_by_size(driver=driver, timeout=timeout,
+                            expected_mu=expected_mu)
+        self.change_mu(driver=driver, timeout=timeout,
+                       expected_mu=expected_mu)
+
         self.update_by_mu(driver=driver, timeout=timeout)
         self.click_reset(driver=driver, timeout=timeout)
         driver.close()
 
 
-# Describe headless browser testing
 if __name__ == "__main__":
     unittest.main()
