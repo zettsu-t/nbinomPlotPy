@@ -16,6 +16,7 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       MPLBACKEND: TKAgg
+      DISPLAY: :99
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -39,6 +40,15 @@ jobs:
         continue-on-error: true
         run: |
           yes "" | streamlit run launcher/launch.py &
+
+      - name: Install Xvfb
+        run: |
+          sudo apt-get install xvfb
+          xvfb-run --auto-servernum npm test
+
+      - name: Run Xvfb
+        run: |
+          Xvfb -ac -screen 0 1024x768x24 :99 &
           sleep(10)
 
       - name: Check
