@@ -1,0 +1,15 @@
+--- index.rst	2021-10-31 01:12:41.395794400 +0000
++++ patch/index.rst	2021-10-31 01:13:33.084121800 +0000
+@@ -6,6 +6,12 @@
+ Welcome to nbinomPlotPy's documentation!
+ ========================================
+ 
++.. automodule:: nb_plot_streamlit.ui
++    :members:
++
++.. automodule:: nb_plot_streamlit.nbinom
++    :members:
++
+ .. toctree::
+    :maxdepth: 2
+    :caption: Contents:

@@ -13,6 +13,7 @@ class TestNbinomDist(unittest.TestCase):
 
     def check_data_frame(self, csv_string: str, n_row: int):
         """Check if a CSV file as a string has a expected structure"""
+
         pattern = re.compile("x,density\\n(\\d+\\.0,0\\.\\d+\\n){" +
                              str(int(n_row)) + "}")
         self.assertTrue(pattern.match(csv_string) is not None)
@@ -23,6 +24,7 @@ class TestNbinomDist(unittest.TestCase):
 
     def test_init(self):
         """Test init"""
+
         params = {"initial_size": 1.0, "initial_prob": 0.5}
         nb_dist = NbinomDist(initial_values=params)
         self.assertAlmostEqual(nb_dist.get_size(), 1.0)
@@ -31,6 +33,7 @@ class TestNbinomDist(unittest.TestCase):
 
     def test_init_another(self):
         """Test init with another parameter set"""
+
         params = {"initial_size": 4.0, "initial_prob": 0.25}
         nb_dist = NbinomDist(initial_values=params)
         self.assertAlmostEqual(nb_dist.get_size(), 4.0)
@@ -39,6 +42,7 @@ class TestNbinomDist(unittest.TestCase):
 
     def test_reset(self):
         """Test rest"""
+
         params = {"initial_size": 6.0, "initial_prob": 0.75}
         nb_dist = NbinomDist(initial_values=params)
         self.assertAlmostEqual(nb_dist.get_size(), 6.0)
@@ -55,6 +59,7 @@ class TestNbinomDist(unittest.TestCase):
 
     def test_update_size_prob(self):
         """Test update_size_prob"""
+
         params = {"initial_size": 1.0, "initial_prob": 0.5}
         nb_dist = NbinomDist(initial_values=params)
         self.assertAlmostEqual(nb_dist.get_size(), 1.0)
@@ -66,6 +71,7 @@ class TestNbinomDist(unittest.TestCase):
 
     def test_update_mu_prob(self):
         """Test update_mu_prob"""
+
         params = {"initial_size": 1.0, "initial_prob": 0.5}
         nb_dist = NbinomDist(initial_values=params)
         self.assertAlmostEqual(nb_dist.get_size(), 1.0)
@@ -77,6 +83,7 @@ class TestNbinomDist(unittest.TestCase):
 
     def test_set_quantile(self):
         """Test set_quantile and get_data"""
+
         params = {"initial_size": 4.0, "initial_prob": 0.25}
         nb_dist = NbinomDist(initial_values=params)
 
@@ -100,6 +107,7 @@ class TestNbinomDist(unittest.TestCase):
 
     def test_set_quantile_another(self):
         """Test set_quantile and get_data with another parameter set"""
+
         params = {"initial_size": 6.0, "initial_prob": 0.75}
         nb_dist = NbinomDist(initial_values=params)
 
@@ -123,6 +131,7 @@ class TestNbinomDist(unittest.TestCase):
 
     def test_wrong_quantile(self):
         """Test wrong quantiles"""
+
         params = {"initial_size": 4.0, "initial_prob": 0.25}
         nb_dist = NbinomDist(initial_values=params)
 

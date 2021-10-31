@@ -41,11 +41,14 @@ and you can access the nbinomPlotPy app at <http://example.com:8501/>. Note that
 
 The attached `Dockerfile` and `docker-compose.yml` come in handy to make a Docker container to build, test, and run the Streamlit app. See [an introduction to use Python Package Template Project](https://github.com/zettsu-t/create-py-package) for more details.
 
-## Run a headless display
+
+## Check this app
+
+### Run a headless display
 
 Testing UIs with a headless browser requires a headless display. You can run Xvfb for this purpose. Note that Xvfb runs as root and testing as a user has to share the *DISPLAY* variable and `docker-compose.yml` can hold it.
 
-You can open a shell inside the Docker container
+Open a shell inside the Docker container as root
 
 ``` bash
 docker ps
@@ -59,15 +62,15 @@ export DISPLAY=:99
 Xvfb -ac -screen 0 1920x1080x24 "${DISPLAY}" &
 ```
 
-## Check this app
+### Run tests
 
-You can run unit tests, check code, and make documents as a user (jovyan is the default user of jupyter/datascience-notebook).
+Open a shell inside the Docker container as a user.
 
 ``` bash
 docker exec -it container-ID /bin/bash
 ```
 
-Notice: this app is not compliant with these checking and documentation yet.
+and run the streamlit Server, launch this Streamlit app, and run tests.
 
 ``` bash
 export DISPLAY=:99
@@ -75,12 +78,59 @@ python -m pip install -e .
 yes "" | streamlit run launcher/launch.py &
 # Wait until the Streamlit server is ready
 ps ux | grep firefox | awk '{print $2}' | xargs kill; pytest
-pytest --cov=.
-pytest --cov=. --cov-report=html
+```
+
+### Check code
+
+``` bash
 flake8
 pylint src/ tests/
 mypy src/nb_plot_streamlit/*.py
+pytest --cov=.
+pytest --cov=. --cov-report=html
+```
+
+## Make documents of this package
+
+First, run the Sphinx quickstart. When you asked if "Separate source and build directories (y/n) [n]:", reply "n" here.
+
+``` bash
 sphinx-quickstart
-sphinx-build source -b html docs/src
+```
+
+Second, edit `./conf.py` to apply the differences below.
+
+``` python
+-# import os
+-# import sys
+-# sys.path.insert(0, os.path.abspath('.'))
++import os
++import sys
++sys.path.insert(0, os.path.abspath('.'))
+
+-extensions = [
++extensions = ['sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.napoleon'
+```
+
+Third, add Python modules to `./index.rst` as below.
+
+```
+.. automodule:: nb_plot_streamlit.ui
+    :members:
+
+.. automodule:: nb_plot_streamlit.nbinom
+    :members:
+```
+
+Patches come in handy to apply these differences above.
+
+``` bash
+patch < patch/conf.py.diff
+patch < patch/index.rst.diff
+```
+
+Final run `make html` and you can find documents of this packages in `_build/html/index.html`.
+
+``` bash
 make html
 ```

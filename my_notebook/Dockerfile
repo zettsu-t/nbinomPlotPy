@@ -1,7 +1,7 @@
 FROM jupyter/datascience-notebook
 
 USER root
-RUN apt-get update && apt-get install -y gnupg2 make python3-sphinx unzip wget xvfb libegl-dev libpci-dev
+RUN apt-get update && apt-get install -y gnupg2 make patch python3-sphinx unzip wget xvfb libegl-dev libpci-dev
 
 RUN wget https://dl.google.com/linux/linux_signing_key.pub
 RUN apt-key add linux_signing_key.pub

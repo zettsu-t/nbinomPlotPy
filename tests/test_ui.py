@@ -11,8 +11,7 @@ import unittest
 import cv2
 
 # export USE_HEADLESS_BROWSER=1
-# and this uses a headless mode (for local)
-# instead of Xvfb (for GitHub Actions)
+# and these tests below use a headless mode
 USE_HEADLESS_BROWSER = os.environ.get("USE_HEADLESS_BROWSER") is not None
 if not USE_HEADLESS_BROWSER:
     import matplotlib
@@ -346,7 +345,7 @@ class TestUI(unittest.TestCase):
                                      snapshot_dir=snapshot_dir)
 
             # export GITHUB_ACTIONS=1
-            # and it skip the check below
+            # and it skips checks of snapshots
             if os.environ.get("GITHUB_ACTIONS") is None:
                 self.compare_snapshots(snapshot_dir)
 

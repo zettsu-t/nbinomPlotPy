@@ -26,12 +26,14 @@ class NbinomDist:
         @type initial_values: dict
         @param initial_values: an initial value set to reset
         """
+
         self.initial_size = initial_values["initial_size"]
         self.initial_prob = initial_values["initial_prob"]
         self.reset()
 
     def _update(self):
         """Update private variables consistent"""
+
         self.mu = self.size * (1 - self.prob) / self.prob
         x_value: int = 0
         accum: float = 0.0
@@ -49,6 +51,7 @@ class NbinomDist:
         @type quantile: str
         @param quantile: a quantile value in (0.0, 1.0)
         """
+
         try:
             value = float(quantile)
             if 0.0 < value < 1.0:
@@ -59,6 +62,7 @@ class NbinomDist:
 
     def reset(self):
         """Reinitialize private variables"""
+
         self.size = self.initial_size
         self.prob = self.initial_prob
         self._update()
@@ -73,6 +77,7 @@ class NbinomDist:
         @type prob: float
         @param prob: the prob parameter of a negative binomial distribution
         """
+
         self.size = size
         self.prob = prob
         self._update()
@@ -87,6 +92,7 @@ class NbinomDist:
         @type prob: float
         @param prob: the prob parameter of a negative binomial distribution
         """
+
         self.mu = mu
         self.prob = prob
         self.size = self.mu * self.prob / (1 - self.prob)
@@ -99,6 +105,7 @@ class NbinomDist:
         @type quantile: str
         @param quantile: a quantile value in (0.0, 1.0)
         """
+
         self._set_quantile(quantile=quantile)
 
     def get_max_x_plus_one(self) -> float:
@@ -107,6 +114,7 @@ class NbinomDist:
         @rtype: float
         @return: Returns the upper bound plus one to make a range [0, bound).
         """
+
         return self.max_x_plus_one
 
     def get_size(self) -> float:
@@ -115,6 +123,7 @@ class NbinomDist:
         @rtype: float
         @return: Returns the size parameter
         """
+
         return self.size
 
     def get_prob(self) -> float:
@@ -123,6 +132,7 @@ class NbinomDist:
         @rtype: float
         @return: Returns the prob parameter
         """
+
         return self.prob
 
     def get_mu(self) -> float:
@@ -131,6 +141,7 @@ class NbinomDist:
         @rtype: float
         @return: Returns the mu parameter
         """
+
         return self.mu
 
     def get_quantile(self) -> str:
@@ -139,6 +150,7 @@ class NbinomDist:
         @rtype: str
         @return: Returns the quantile parameter
         """
+
         return self.quantile
 
     def _get_raw_data(self) -> Tuple[np.ndarray, np.ndarray]:
@@ -146,6 +158,7 @@ class NbinomDist:
         @rtype: Tuple[np.ndarray, np.ndarray]
         @return: Returns a pair of xs and their probability
         """
+
         xs: np.ndarray = np.arange(0, int(np.ceil(self.max_x_plus_one)), 1)
         ys: np.ndarray = nbinom.pmf(xs, self.size, self.prob)
         return xs, ys
@@ -156,6 +169,7 @@ class NbinomDist:
         @rtype: bytes
         @return: Returns a CSV table as a file-writable byte sequence
         """
+
         xs, ys = self._get_raw_data()
         mat: np.ndarray = np.array([xs, ys]).T
         df: pd.DataFrame = pd.DataFrame(data=mat, columns=["x", "density"])
@@ -167,4 +181,5 @@ class NbinomDist:
         @rtype: Tuple[np.ndarray, np.ndarray]
         @return: Returns a pair of xs and their probability
         """
+
         return self._get_raw_data()
