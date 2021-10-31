@@ -59,7 +59,8 @@ and run a headless display as root.
 
 ``` bash
 export DISPLAY=:99
-Xvfb -ac -screen 0 1920x1080x24 "${DISPLAY}" &
+# Same as a default of a headless browser
+Xvfb -ac -screen 0 1024x768x24 "${DISPLAY}" &
 ```
 
 ### Run tests

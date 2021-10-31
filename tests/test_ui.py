@@ -9,15 +9,8 @@ import tempfile
 import time
 import unittest
 import cv2
-
-# export USE_HEADLESS_BROWSER=1
-# and these tests below use a headless mode
-USE_HEADLESS_BROWSER = os.environ.get("USE_HEADLESS_BROWSER") is not None
-if not USE_HEADLESS_BROWSER:
-    import matplotlib
-    # Write this here before importing Selenium and have Pylint ignore this
-    matplotlib.use('TKAgg')
-
+# Set matplotlib.use('Agg') before importing Selenium
+import nb_plot_streamlit.ui
 import numpy as np
 import pandas as pd
 from selenium import webdriver
@@ -27,8 +20,10 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import nb_plot_streamlit.ui
 
+# export USE_HEADLESS_BROWSER=1
+# and these tests below use a headless mode
+USE_HEADLESS_BROWSER = os.environ.get("USE_HEADLESS_BROWSER") is not None
 
 XPATH_TOP = '/html/body/div/div[1]/div/div/div/div/'
 XPATH_SIDEBAR = XPATH_TOP + 'section[1]/div[1]/div[2]/div[1]/'
