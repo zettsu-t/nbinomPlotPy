@@ -19,8 +19,8 @@ def read_default_config() -> dict:
     """
     Read a default config in the config file
 
-    @rtype initial_values: dict
-    @return: Returns the default config
+    :rtype: dict
+    :return: Returns the default config
     """
 
     with open(file="config/config.yml", mode='r', encoding='utf8') as file:
@@ -99,4 +99,4 @@ def draw():
     st.download_button(label="download",
                        data=csv,
                        file_name=DEFAULT_CSV_FILENAME,
-                       mime="text/csv")
+                       mime=DEFAULT_CSV_MIME)

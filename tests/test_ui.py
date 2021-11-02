@@ -4,13 +4,14 @@ Testing the UI
 
 import glob
 import os
+import re
 import subprocess
 import tempfile
 import time
 import unittest
-import cv2
 # Set matplotlib.use('Agg') before importing Selenium
 import nb_plot_streamlit.ui
+import cv2
 import numpy as np
 import pandas as pd
 from selenium import webdriver
@@ -50,12 +51,31 @@ SNAPSHOT_FILENAME_QUANTILE2 = "screen_shot_quantile2.png"
 SNAPSHOT_FILENAME_QUANTILE3 = "screen_shot_quantile3.png"
 
 
-def is_process_alive(proc_name):
+def check_process_alive(proc_name):
     """Check if a process is alive"""
 
     command = f"ps aux | egrep -v grep | egrep -e \\\\b{proc_name}\\\\b"
-    result = subprocess.run(command, shell=True, check=False).returncode
-    return result == 0
+    return subprocess.run(command, shell=True, check=False,
+                          capture_output=True)
+
+
+def is_process_alive(proc_name):
+    """Return if a process is alive"""
+
+    return check_process_alive(proc_name).returncode == 0
+
+
+def check_xvfb_alive(proc_name):
+    """Check if a Xvfb process is alive"""
+
+    result = check_process_alive(proc_name)
+    display = None
+    matched = re.search(f"{proc_name}[^:]*(:\\d+)",
+                        result.stdout.decode("utf-8"))
+    if matched is not None:
+        display = matched[1]
+
+    return result.returncode == 0, display
 
 
 def open_driver(mode, download_dir):
@@ -69,7 +89,8 @@ def open_driver(mode, download_dir):
     options.set_preference("browser.download.folderList", 2)
     options.set_preference("browser.download.manager.showWhenStarting",
                            False)
-    options.set_preference("browser.download.dir", download_dir)
+    options.set_preference("browser.download.dir",
+                           os.path.abspath(download_dir))
     options.set_preference("browser.helperApps.neverAsk.saveToDisk",
                            nb_plot_streamlit.ui.DEFAULT_CSV_MIME)
     return webdriver.Firefox(options=options)
@@ -79,8 +100,12 @@ def open_connection(url, timeout, download_dir, snapshot_dir):
     """Open a page and select an item"""
 
     driver = None
-    if not is_process_alive("Xvfb"):
+    alive, display = check_xvfb_alive("Xvfb")
+    if not alive:
         raise ProcessLookupError("No Xvfb process found")
+
+    if os.environ.get("DISPLAY") is None and display is not None:
+        os.environ["DISPLAY"] = display
 
     if USE_HEADLESS_BROWSER:
         driver = open_driver(mode="--headless", download_dir=download_dir)
@@ -310,12 +335,17 @@ class TestUI(unittest.TestCase):
         """Reset all parameters"""
 
         wait = WebDriverWait(driver, timeout)
-        wait.until(EC.element_to_be_clickable((By.XPATH, XPATH_DOWNLOAD)))
-        driver.find_elements(By.XPATH, XPATH_DOWNLOAD)[0].click()
+
+        # Prevent Firefox from downloading a CSV file as out(1).csv
+        # instead of out.csv
         df_filename = os.path.join(download_dir,
                                    nb_plot_streamlit.ui.DEFAULT_CSV_FILENAME)
+        if os.path.exists(df_filename):
+            os.remove(df_filename)
+
+        wait.until(EC.element_to_be_clickable((By.XPATH, XPATH_DOWNLOAD)))
+        driver.find_elements(By.XPATH, XPATH_DOWNLOAD)[0].click()
         df = pd.read_csv(df_filename)
-        os.remove(df_filename)
 
         # Pylint reports false positive
         self.assertAlmostEqual(df.shape[0], n_rows)

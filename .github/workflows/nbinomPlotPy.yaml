@@ -58,3 +58,10 @@ jobs:
       - name: Check frontend
         run: |
           pytest tests/test_ui.py
+
+      - name: Make documents
+        run: |
+          sphinx-quickstart -q -p nbinomPlotPy -a "Zettsu Tatsuya"
+          patch < patch/conf.py.diff
+          patch < patch/index.rst.diff
+          make html

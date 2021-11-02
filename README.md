@@ -2,6 +2,8 @@
 
 The goal of nbinomPlotPy is to show an example of how to build, test, and deploy a Streamlit app.
 
+![Page Sample](tests/data/screen_shot_initial.png)
+
 ## Build and install
 
 ``` bash
@@ -78,6 +80,7 @@ export DISPLAY=:99
 python -m pip install -e .
 yes "" | streamlit run launcher/launch.py &
 # Wait until the Streamlit server is ready
+# Run as a user, not as root
 ps ux | grep firefox | awk '{print $2}' | xargs kill; pytest
 ```
 
@@ -97,6 +100,12 @@ First, run the Sphinx quickstart. When you asked if "Separate source and build d
 
 ``` bash
 sphinx-quickstart
+```
+
+You can run sphinx-quickstart in non-interactive mode as below.
+
+``` bash
+sphinx-quickstart -q -p nbinomPlotPy -a "Author's name"
 ```
 
 Second, edit `./conf.py` to apply the differences below.
@@ -135,3 +144,5 @@ Final run `make html` and you can find documents of this packages in `_build/htm
 ``` bash
 make html
 ```
+
+Note that Sphinx uses a single `:` as the field marker (not `@` in Javadoc) and a trailing `:` is required for a field and its options like `:type size: float` and `:rtype:`.

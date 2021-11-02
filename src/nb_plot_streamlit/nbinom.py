@@ -23,8 +23,8 @@ class NbinomDist:
         """
         Initialize
 
-        @type initial_values: dict
-        @param initial_values: an initial value set to reset
+        :type initial_values: dict
+        :param initial_values: an initial value set to reset
         """
 
         self.initial_size = initial_values["initial_size"]
@@ -48,8 +48,8 @@ class NbinomDist:
         """
         Update the quantile if the argument is acceptable
 
-        @type quantile: str
-        @param quantile: a quantile value in (0.0, 1.0)
+        :type quantile: str
+        :param quantile: a quantile value in (0.0, 1.0)
         """
 
         try:
@@ -71,11 +71,11 @@ class NbinomDist:
         """
         Update the size and prob parameters and calculate the mu parameter
 
-        @type size: float
-        @param size: the size parameter of a negative binomial distribution
+        :type size: float
+        :param size: the size parameter of a negative binomial distribution
 
-        @type prob: float
-        @param prob: the prob parameter of a negative binomial distribution
+        :type prob: float
+        :param prob: the prob parameter of a negative binomial distribution
         """
 
         self.size = size
@@ -86,11 +86,11 @@ class NbinomDist:
         """
         Update the mu and prob parameters and calculate the size parameter
 
-        @type mu: float
-        @param mu: the size parameter of a negative binomial distribution
+        :type mu: float
+        :param mu: the size parameter of a negative binomial distribution
 
-        @type prob: float
-        @param prob: the prob parameter of a negative binomial distribution
+        :type prob: float
+        :param prob: the prob parameter of a negative binomial distribution
         """
 
         self.mu = mu
@@ -102,8 +102,8 @@ class NbinomDist:
         """
         Set the upper bound quantile parameter
 
-        @type quantile: str
-        @param quantile: a quantile value in (0.0, 1.0)
+        :type quantile: str
+        :param quantile: a quantile value in (0.0, 1.0)
         """
 
         self._set_quantile(quantile=quantile)
@@ -111,8 +111,9 @@ class NbinomDist:
     def get_max_x_plus_one(self) -> float:
         """
         Get the upper bound x for the quantile parameter.
-        @rtype: float
-        @return: Returns the upper bound plus one to make a range [0, bound).
+
+        :rtype: float
+        :return: Returns the upper bound plus one to make a range [0, bound).
         """
 
         return self.max_x_plus_one
@@ -120,8 +121,9 @@ class NbinomDist:
     def get_size(self) -> float:
         """
         Get the size parameter
-        @rtype: float
-        @return: Returns the size parameter
+
+        :rtype: float
+        :return: Returns the size parameter
         """
 
         return self.size
@@ -129,8 +131,9 @@ class NbinomDist:
     def get_prob(self) -> float:
         """
         Get the prob parameter
-        @rtype: float
-        @return: Returns the prob parameter
+
+        :rtype: float
+        :return: Returns the prob parameter
         """
 
         return self.prob
@@ -138,8 +141,9 @@ class NbinomDist:
     def get_mu(self) -> float:
         """
         Get the mu parameter
-        @rtype: float
-        @return: Returns the mu parameter
+
+        :rtype: float
+        :return: Returns the mu parameter
         """
 
         return self.mu
@@ -147,16 +151,19 @@ class NbinomDist:
     def get_quantile(self) -> str:
         """
         Get the quantile parameter
-        @rtype: str
-        @return: Returns the quantile parameter
+
+        :rtype: str
+        :return: Returns the quantile parameter
         """
 
         return self.quantile
 
     def _get_raw_data(self) -> Tuple[np.ndarray, np.ndarray]:
-        """Calculate [0, bound) and their probability
-        @rtype: Tuple[np.ndarray, np.ndarray]
-        @return: Returns a pair of xs and their probability
+        """
+        Calculate [0, bound) and their probability
+
+        :rtype: Tuple[np.ndarray, np.ndarray]
+        :return: Returns a pair of xs and their probability
         """
 
         xs: np.ndarray = np.arange(0, int(np.ceil(self.max_x_plus_one)), 1)
@@ -166,8 +173,9 @@ class NbinomDist:
     def get_df(self) -> bytes:
         """
         Make a CSV table [0, bound) and their probability to write a file
-        @rtype: bytes
-        @return: Returns a CSV table as a file-writable byte sequence
+
+        :rtype: bytes
+        :return: Returns a CSV table as a file-writable byte sequence
         """
 
         xs, ys = self._get_raw_data()
@@ -178,8 +186,9 @@ class NbinomDist:
     def get_data(self) -> Tuple[np.ndarray, np.ndarray]:
         """
         Make a CSV table [0, bound) and their probability to write a file
-        @rtype: Tuple[np.ndarray, np.ndarray]
-        @return: Returns a pair of xs and their probability
+
+        :rtype: Tuple[np.ndarray, np.ndarray]
+        :return: Returns a pair of xs and their probability
         """
 
         return self._get_raw_data()

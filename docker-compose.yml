@@ -1,8 +1,8 @@
 version: '3'
 services:
-  my_notebook:
+  streamlit:
     build: ./my_notebook
-    image: my_notebook
+    image: streamlit
     user: jovyan
     ports:
       - 8888:8888

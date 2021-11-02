@@ -18,5 +18,9 @@ ENV PATH="/opt/conda/bin:${PATH}"
 RUN pip3 install autopep8 check-manifest coverage flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
 RUN pip3 install chromedriver-binary-auto
 
+# Same as ports in docker-compose.yml
+EXPOSE 8888
+EXPOSE 8501
+
 ARG JUPYTER_PASSWORD="sha1:pass-with-build-arg"
 RUN sed -E -i.bak -e "s/^[# ]*c.NotebookApp.password *=.*/c.NotebookApp.password = ${JUPYTER_PASSWORD}/" /home/jovyan/.jupyter/jupyter_notebook_config.py
