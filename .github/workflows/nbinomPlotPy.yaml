@@ -8,10 +8,10 @@ on:
       - main
       - master
 
-name: nbinomPlotPy
+name: build_test
 
 jobs:
-  nbinomPlotPy:
+  build_test:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}

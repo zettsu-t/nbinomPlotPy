@@ -2,7 +2,9 @@
 
 The goal of nbinomPlotPy is to show an example of how to build, test, and deploy a Streamlit app.
 
-![Page Sample](tests/data/screen_shot_initial.png)
+[![build_test](https://github.com/zettsu-t/nbinomPlotPy/workflows/build_test/badge.svg)](https://github.com/zettsu-t/nbinomPlotPy/actions)
+
+![Sample Page](tests/data/screen_shot_initial.png)
 
 ## Build and install
 
