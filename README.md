@@ -43,8 +43,13 @@ streamlit run launcher/launch.py
 
 and you can access the nbinomPlotPy app at <http://example.com:8501/>. Note that you have to replace the URL with an actual server.
 
-The attached `Dockerfile` and `docker-compose.yml` come in handy to make a Docker container to build, test, and run the Streamlit app. See [an introduction to use Python Package Template Project](https://github.com/zettsu-t/create-py-package) for more details.
+The attached `Dockerfile`s and `docker-compose.yml` come in handy to make a Docker container to build, test, and run the Streamlit app. See [an introduction to use Python Package Template Project](https://github.com/zettsu-t/create-py-package) for more details.
 
+``` bash
+docker-compose build
+docker build . -f launcher/Dockerfile -t streamlit_build
+docker run -d -p 8501:8501 streamlit_build
+```
 
 ## Check this app
 

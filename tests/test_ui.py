@@ -357,7 +357,7 @@ class TestUI(unittest.TestCase):
         if not is_process_alive("streamlit"):
             raise ProcessLookupError("No Streamlit server found")
 
-        timeout = 30
+        timeout = 90
         url = "http://localhost:8501"
         with tempfile.TemporaryDirectory() as temp_dir:
             snapshot_dir = SNAPSHOT_DIR
