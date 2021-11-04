@@ -16,11 +16,13 @@ import numpy as np
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver import ActionChains
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
 
 # export USE_HEADLESS_BROWSER=1
 # and these tests below use a headless mode
@@ -106,15 +108,15 @@ def open_driver(mode, download_dir):
     chrome_options.add_argument("start-maximized")
     chrome_options.add_argument("disable-infobars")
     chrome_options.add_experimental_option("useAutomationExtension", False)
+
     chrome_prefs = {"profile.default_content_settings.popups": 0,
                     "download.default_directory": out_dir,
                     "directory_upgrade": True}
     chrome_options.add_experimental_option("prefs", chrome_prefs)
-    chrome_caps = webdriver.DesiredCapabilities.CHROME.copy()
 
+    service = Service(ChromeDriverManager().install())
     if USE_CHROME:
-        driver = webdriver.Chrome(chrome_options=chrome_options,
-                                  desired_capabilities=chrome_caps)
+        driver = webdriver.Chrome(service=service, options=chrome_options)
     else:
         driver = webdriver.Firefox(options=options)
 
@@ -390,7 +392,7 @@ class TestUI(unittest.TestCase):
             raise ProcessLookupError("No Streamlit server found")
 
         if USE_CHROME:
-            timeout = 30
+            timeout = 60
         else:
             timeout = 90
         url = "http://localhost:8501"
