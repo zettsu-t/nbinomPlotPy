@@ -39,8 +39,8 @@ setup(
                 'pipenv', 'pylint', 'py_pkg',
                 'sphinx', 'sphinx_rtd_theme',
                 'types-PyYAML', 'types-requests'],
-        'test': ['coverage', 'opencv-python',
-                 'pytest', 'pytest-cov', 'seleniumbase'],
+        'test': ['chromedriver-binary-auto', 'coverage', 'opencv-python',
+                 'pytest', 'pytest-cov', 'seleniumbase', 'webdriver_manager'],
     },
 
     package_data={

@@ -17,6 +17,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       USE_HEADLESS_BROWSER: 1
       DISPLAY: :99
+      USE_CHROME: 1
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -30,7 +31,7 @@ jobs:
 
       - name: Install python package dependencies
         run: |
-          python -m pip install autopep8 check-manifest coverage flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
+          python -m pip install autopep8 check-manifest coverage flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
           python -m pip install chromedriver-binary-auto webdriver_manager
 
       - name: Install this package
