@@ -321,8 +321,7 @@ class TestUI(unittest.TestCase):
         old_element = driver.find_elements(By.XPATH, XPATH_SIZE)[0]
         update_element = driver.find_elements(By.XPATH, XPATH_UPDATE)[0]
         update_element.click()
-        if not USE_CHROME:
-            wait.until(EC.staleness_of(old_element))
+        wait.until(EC.staleness_of(old_element))
         wait.until(EC.text_to_be_present_in_element(
             (By.XPATH, XPATH_SIZE_VALUE), updated_size))
 
