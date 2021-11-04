@@ -91,6 +91,13 @@ yes "" | streamlit run launcher/launch.py &
 ps ux | grep firefox | awk '{print $2}' | xargs kill; pytest
 ```
 
+To use Chrome instead of Firefox, set the environment variable USE_CHROME. Setting the environment variable GITHUB_ACTIONS disables tests of snapshots (this is a behavior in GitHub Actions).
+
+``` bash
+export USE_CHROME=1
+export GITHUB_ACTIONS=1
+```
+
 ### Check code
 
 ``` bash

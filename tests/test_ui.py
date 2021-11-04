@@ -24,6 +24,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 # export USE_HEADLESS_BROWSER=1
 # and these tests below use a headless mode
+USE_CHROME = os.environ.get("USE_CHROME") is not None
 USE_HEADLESS_BROWSER = os.environ.get("USE_HEADLESS_BROWSER") is not None
 
 XPATH_TOP = '/html/body/div/div[1]/div/div/div/div/'
@@ -93,7 +94,31 @@ def open_driver(mode, download_dir):
                            os.path.abspath(download_dir))
     options.set_preference("browser.helperApps.neverAsk.saveToDisk",
                            nb_plot_streamlit.ui.DEFAULT_CSV_MIME)
-    return webdriver.Firefox(options=options)
+
+    # Always use --headless, not --xvfb
+    out_dir = os.path.abspath(download_dir) + "/"
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("start-maximized")
+    chrome_options.add_argument("disable-infobars")
+    chrome_options.add_experimental_option("useAutomationExtension", False)
+    chrome_prefs = {"profile.default_content_settings.popups": 0,
+                    "download.default_directory": out_dir,
+                    "directory_upgrade": True}
+    chrome_options.add_experimental_option("prefs", chrome_prefs)
+    chrome_caps = webdriver.DesiredCapabilities.CHROME.copy()
+
+    if USE_CHROME:
+        driver = webdriver.Chrome(chrome_options=chrome_options,
+                                  desired_capabilities=chrome_caps)
+    else:
+        driver = webdriver.Firefox(options=options)
+
+    return driver
 
 
 def open_connection(url, timeout, download_dir, snapshot_dir):
@@ -133,7 +158,7 @@ def wait_until_changes(element, key, old_value, timesec):
         new_value = element.get_attribute(key)
         if not new_value == old_value:
             break
-        time.sleep(1)
+        time.sleep(0.05)
 
 
 def change_quantile(driver, timeout):
@@ -296,7 +321,8 @@ class TestUI(unittest.TestCase):
         old_element = driver.find_elements(By.XPATH, XPATH_SIZE)[0]
         update_element = driver.find_elements(By.XPATH, XPATH_UPDATE)[0]
         update_element.click()
-        wait.until(EC.staleness_of(old_element))
+        if not USE_CHROME:
+            wait.until(EC.staleness_of(old_element))
         wait.until(EC.text_to_be_present_in_element(
             (By.XPATH, XPATH_SIZE_VALUE), updated_size))
 
@@ -338,13 +364,20 @@ class TestUI(unittest.TestCase):
 
         # Prevent Firefox from downloading a CSV file as out(1).csv
         # instead of out.csv
-        df_filename = os.path.join(download_dir,
+        df_filename = os.path.join(os.path.abspath(download_dir),
                                    nb_plot_streamlit.ui.DEFAULT_CSV_FILENAME)
         if os.path.exists(df_filename):
             os.remove(df_filename)
 
         wait.until(EC.element_to_be_clickable((By.XPATH, XPATH_DOWNLOAD)))
         driver.find_elements(By.XPATH, XPATH_DOWNLOAD)[0].click()
+
+        count = 0
+        if count < 100 and (not os.path.exists(df_filename) or
+                            os.path.getsize(df_filename) == 0):
+            time.sleep(0.1)
+            count = count + 1
+
         df = pd.read_csv(df_filename)
 
         # Pylint reports false positive
@@ -357,7 +390,10 @@ class TestUI(unittest.TestCase):
         if not is_process_alive("streamlit"):
             raise ProcessLookupError("No Streamlit server found")
 
-        timeout = 90
+        if USE_CHROME:
+            timeout = 30
+        else:
+            timeout = 90
         url = "http://localhost:8501"
         with tempfile.TemporaryDirectory() as temp_dir:
             snapshot_dir = SNAPSHOT_DIR

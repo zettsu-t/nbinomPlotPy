@@ -17,6 +17,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       USE_HEADLESS_BROWSER: 1
       DISPLAY: :99
+      USE_CHROME: 1
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
