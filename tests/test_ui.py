@@ -84,40 +84,40 @@ def check_xvfb_alive(proc_name):
 def open_driver(mode, download_dir):
     """Open a headless browser"""
 
-    options = Options()
-    options.add_argument(mode)
-
-    # https://sqa.stackexchange.com/questions/2197/
-    # how-to-download-a-file-using-seleniums-webdriver
-    options.set_preference("browser.download.folderList", 2)
-    options.set_preference("browser.download.manager.showWhenStarting",
-                           False)
-    options.set_preference("browser.download.dir",
-                           os.path.abspath(download_dir))
-    options.set_preference("browser.helperApps.neverAsk.saveToDisk",
-                           nb_plot_streamlit.ui.DEFAULT_CSV_MIME)
-
-    # Always use --headless, not --xvfb
-    out_dir = os.path.abspath(download_dir) + "/"
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-extensions")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("start-maximized")
-    chrome_options.add_argument("disable-infobars")
-    chrome_options.add_experimental_option("useAutomationExtension", False)
-
-    chrome_prefs = {"profile.default_content_settings.popups": 0,
-                    "download.default_directory": out_dir,
-                    "directory_upgrade": True}
-    chrome_options.add_experimental_option("prefs", chrome_prefs)
-
-    service = Service(CHROME_DRIVER_PATH)
     if USE_CHROME:
+        # Always use --headless, not --xvfb
+        out_dir = os.path.abspath(download_dir) + "/"
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-extensions")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("start-maximized")
+        chrome_options.add_argument("disable-infobars")
+        chrome_options.add_experimental_option("useAutomationExtension",
+                                               False)
+
+        chrome_prefs = {"profile.default_content_settings.popups": 0,
+                        "download.default_directory": out_dir,
+                        "directory_upgrade": True}
+        chrome_options.add_experimental_option("prefs", chrome_prefs)
+
+        service = Service(CHROME_DRIVER_PATH)
         driver = webdriver.Chrome(service=service, options=chrome_options)
     else:
+        options = Options()
+        options.add_argument(mode)
+
+        # https://sqa.stackexchange.com/questions/2197/
+        # how-to-download-a-file-using-seleniums-webdriver
+        options.set_preference("browser.download.folderList", 2)
+        options.set_preference("browser.download.manager.showWhenStarting",
+                               False)
+        options.set_preference("browser.download.dir",
+                               os.path.abspath(download_dir))
+        options.set_preference("browser.helperApps.neverAsk.saveToDisk",
+                               nb_plot_streamlit.ui.DEFAULT_CSV_MIME)
         driver = webdriver.Firefox(options=options)
 
     return driver

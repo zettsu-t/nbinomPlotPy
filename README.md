@@ -87,7 +87,19 @@ export DISPLAY=:99
 python -m pip install -e .
 yes "" | streamlit run launcher/launch.py &
 # Wait until the Streamlit server is ready
+
 # Run as a user, not as root
+unset USE_CHROME
+export USE_HEADLESS_BROWSER=1
+unset GITHUB_ACTIONS
+ps ux | grep firefox | awk '{print $2}' | xargs kill; pytest
+```
+
+To use Xvfb instead of the headless mode, unset the environment variable USE_HEADLESS_BROWSER.
+
+``` bash
+unset USE_CHROME
+unset USE_HEADLESS_BROWSER
 ps ux | grep firefox | awk '{print $2}' | xargs kill; pytest
 ```
 
@@ -95,7 +107,9 @@ To use Chrome instead of Firefox, set the environment variable USE_CHROME. Setti
 
 ``` bash
 export USE_CHROME=1
+export USE_HEADLESS_BROWSER=1
 export GITHUB_ACTIONS=1
+pytest
 ```
 
 ### Check code
