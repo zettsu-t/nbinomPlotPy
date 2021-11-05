@@ -40,7 +40,7 @@ setup(
                 'sphinx', 'sphinx_rtd_theme',
                 'types-PyYAML', 'types-requests'],
         'test': ['chromedriver-binary-auto', 'coverage', 'opencv-python',
-                 'pytest', 'pytest-cov', 'seleniumbase', 'webdriver_manager'],
+                 'pytest', 'pytest-cov', 'seleniumbase'],
     },
 
     package_data={
