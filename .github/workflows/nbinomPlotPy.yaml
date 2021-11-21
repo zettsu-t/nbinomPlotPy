@@ -36,7 +36,15 @@ jobs:
           sudo apt-get install -y build-essential python3-dev unzip wget
           sudo wget https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.gz
           sudo tar xzf boost_1_77_0.tar.gz
-          sudo cd boost_1_77_0 && ./bootstrap.sh --with-libraries=python --with-python=python3.9 --with-python-version=3.9 && ./b2 install cxxflags=-fPIC address-model=64 threading=multi link=static runtime-link=shared variant=release -j4 --prefix=/opt/boost_1_77_0
+
+      - name: Install Boost C++ libraries
+        working-directory: ./boost_1_77_0
+        run: |
+          sudo ./bootstrap.sh --with-libraries=python --with-python=python3.9 --with-python-version=3.9
+          sudo ./b2 install cxxflags=-fPIC address-model=64 threading=multi link=static runtime-link=shared variant=release -j4 --prefix=/opt/boost_1_77_0
+
+      - name: Install Google Test
+        run: |
           sudo wget https://github.com/google/googletest/archive/refs/heads/main.zip
           sudo unzip main.zip
           sudo mv googletest-* /opt/googletest
@@ -61,8 +69,9 @@ jobs:
           sleep(10)
 
       - name: Check C++ code
+        working-directory: ./src/dist
         run: |
-          cd src/dist; make test; cd ../..
+          make test
 
       - name: Check backend
         run: |
