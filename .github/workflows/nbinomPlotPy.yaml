@@ -38,6 +38,16 @@ jobs:
         run: |
           python -m pip install .
 
+      - name: Install C++ and testing packages
+        run: |
+          sudo apt-get install -y build-essential python3-dev unzip wget
+          sudo wget https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.gz
+          sudo tar xzf boost_1_77_0.tar.gz
+          sudo cd boost_1_77_0 && ./bootstrap.sh --with-libraries=python --with-python=python3.9 --with-python-version=3.9 && ./b2 install cxxflags=-fPIC address-model=64 threading=multi link=static runtime-link=shared variant=release -j4 --prefix=/opt/boost_1_77_0
+          sudo wget https://github.com/google/googletest/archive/refs/heads/main.zip
+          sudo unzip main.zip
+          sudo mv googletest-* /opt/googletest
+
       - name: Start Streamlit Server
         continue-on-error: true
         run: |
@@ -45,7 +55,7 @@ jobs:
 
       - name: Install Xvfb
         run: |
-          sudo apt-get install xvfb
+          sudo apt-get install -y xvfb
 
       - name: Run Xvfb
         continue-on-error: true
