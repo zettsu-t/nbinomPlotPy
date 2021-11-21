@@ -43,6 +43,11 @@ jobs:
           sudo ./bootstrap.sh --with-libraries=python --with-python=python3.9 --with-python-version=3.9
           sudo ./b2 install cxxflags=-fPIC address-model=64 threading=multi link=static runtime-link=shared variant=release -j4 --prefix=/opt/boost_1_77_0
 
+      - name: Make aliases
+        continue-on-error: true
+        run: |
+          ln -s /opt/boost_1_77_0/lib/libboost_python39.a /opt/boost_1_77_0/lib/libboost_python.a
+
       - name: Install Google Test
         run: |
           sudo wget https://github.com/google/googletest/archive/refs/heads/main.zip
