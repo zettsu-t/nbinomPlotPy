@@ -46,7 +46,7 @@ jobs:
       - name: Make aliases
         continue-on-error: true
         run: |
-          ln -s /opt/boost_1_77_0/lib/libboost_python39.a /opt/boost_1_77_0/lib/libboost_python.a
+          ln -s /opt/boost_1_77_0/lib/libboost_python*.a /opt/boost_1_77_0/lib/libboost_python39.a
 
       - name: Install Google Test
         run: |
