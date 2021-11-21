@@ -3,11 +3,14 @@ based on
 https://github.com/pypa/sampleproject
 """
 
+from distutils.core import Extension
 from setuptools import setup, find_packages
 import pathlib
 
+
 here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / 'README.md').read_text(encoding='utf-8')
+
 
 setup(
     name='nb_plot_streamlit',
@@ -26,11 +29,22 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: C++',
     ],
 
     keywords='streamlit, sample, development',
     package_dir={'': 'src'},
     packages=find_packages(where='src'),
+
+    ext_modules = [Extension(
+       'nb_plot_streamlit.dist',
+        sources=['src/dist/dist.cpp', 'src/dist/dist_impl.cpp'],
+        include_dirs=['/opt/boost_1_77_0/include'],
+        library_dirs=['/opt/boost_1_77_0/lib'],
+        runtime_library_dirs=['/opt/boost_1_77_0/lib'],
+        libraries=['boost_python39'],
+    )],
+
     python_requires='>=3.9, <4',
     install_requires=['matplotlib', 'numpy', 'pandas',
                       'scipy', 'streamlit', 'pyyaml'],

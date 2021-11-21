@@ -9,6 +9,7 @@ import numpy as np
 import streamlit as st
 import yaml
 from .nbinom import NbinomDist
+from .dist import get_pdf
 
 
 DEFAULT_CSV_FILENAME = "density.csv"

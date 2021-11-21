@@ -1,7 +1,7 @@
 FROM jupyter/datascience-notebook
 
 USER root
-RUN apt-get update && apt-get install -y gnupg2 make patch python3-sphinx unzip wget xvfb libegl-dev libpci-dev
+RUN apt-get update && apt-get install -y build-essential gnupg2 make patch python3-dev python3-sphinx unzip wget xvfb libegl-dev libpci-dev
 
 RUN wget https://dl.google.com/linux/linux_signing_key.pub
 RUN apt-key add linux_signing_key.pub
@@ -12,6 +12,14 @@ RUN apt-get install -y firefox firefox-geckodriver
 RUN wget https://chromedriver.storage.googleapis.com/95.0.4638.17/chromedriver_linux64.zip
 RUN unzip chromedriver_linux64.zip
 RUN mv chromedriver /usr/local/bin/
+
+RUN wget https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.gz
+RUN tar xzf boost_1_77_0.tar.gz
+RUN cd boost_1_77_0 && ./bootstrap.sh --with-libraries=python --with-python=python3.9 --with-python-version=3.9 && ./b2 install cxxflags=-fPIC address-model=64 threading=multi link=static runtime-link=shared variant=release -j4 --prefix=/opt/boost_1_77_0
+
+RUN wget https://github.com/google/googletest/archive/refs/heads/main.zip
+RUN unzip main.zip
+RUN mv googletest-* /opt/googletest
 
 USER jovyan
 ENV PATH="/opt/conda/bin:${PATH}"
