@@ -13,9 +13,11 @@ RUN wget https://chromedriver.storage.googleapis.com/95.0.4638.17/chromedriver_l
 RUN unzip chromedriver_linux64.zip
 RUN mv chromedriver /usr/local/bin/
 
-RUN wget https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.gz
-RUN tar xzf boost_1_77_0.tar.gz
-RUN cd boost_1_77_0 && ./bootstrap.sh --with-libraries=python --with-python=python3.9 --with-python-version=3.9 && ./b2 install cxxflags=-fPIC address-model=64 threading=multi link=static runtime-link=shared variant=release -j4 --prefix=/opt/boost_1_77_0
+ENV BOOST_VERSION="boost_1_77_0"
+RUN wget "https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/${BOOST_VERSION}.tar.gz"
+RUN tar xzf "${BOOST_VERSION}.tar.gz"
+RUN cd "${BOOST_VERSION}" && ./bootstrap.sh --with-libraries=python --with-python=python3.9 --with-python-version=3.9 && ./b2 install cxxflags=-fPIC address-model=64 threading=multi link=static runtime-link=shared variant=release -j4 "--prefix=/opt/${BOOST_VERSION}"
+RUN test -f "/opt/${BOOST_VERSION}/lib/libboost_python39.a" || ln -s "/opt/${BOOST_VERSION}/lib/libboost_python*.a" "/opt/${BOOST_VERSION}/lib/libboost_python39.a"
 
 RUN wget https://github.com/google/googletest/archive/refs/heads/main.zip
 RUN unzip main.zip
