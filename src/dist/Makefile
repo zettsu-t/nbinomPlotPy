@@ -1,5 +1,6 @@
-DIR_BOOST=/opt/boost_1_77_0
+DIR_BOOST=/opt/boost
 DIR_GTEST=/opt/googletest/googletest
+DIR_PYTHON_HEADER=$(shell find /usr/include -type f -name "Python.h" | tail -1 | xargs dirname)
 
 GTEST_SOURCE=$(DIR_GTEST)/src/gtest-all.cc
 GTEST_OBJ=$(patsubst %.cc, %.o, $(notdir $(GTEST_SOURCE)))
@@ -19,7 +20,7 @@ TARGET_PY=libnb_plot_streamlit.so
 TARGET_TEST=test_dist
 TARGETS=$(TARGET_PY) $(TARGET_TEST)
 
-INCLUDE_PYTHON=/usr/include/python3.8/
+INCLUDE_PYTHON=$(DIR_PYTHON_HEADER)
 INCLUDE_BOOST=$(DIR_BOOST)/include
 INCLUDE_GTEST=$(DIR_GTEST)/include
 INCLUDES=$(addprefix -I, $(INCLUDE_PYTHON) $(INCLUDE_BOOST))
@@ -34,8 +35,8 @@ CPPFLAGS_TEST=$(CPPFLAGS)
 LIBPATH=$(addprefix -L, $(DIR_BOOST)/lib)
 LDFLAGS_PY=-DPIC -shared -fPIC
 LDFLAGS_TEST=
-LIBS_PY=-lboost_python39
-LIBS_TEST=-lpthread -lboost_python39
+LIBS_PY=-lboost_python
+LIBS_TEST=-lpthread -lboost_python
 
 .PHONY: all test clean
 
@@ -67,3 +68,6 @@ $(GTEST_OBJ): $(GTEST_SOURCE)
 
 clean:
 	rm -f $(TARGETS) $(OBJS)
+
+show:
+	$(foreach v, $(.VARIABLES), $(info $(v) = $($(v))))

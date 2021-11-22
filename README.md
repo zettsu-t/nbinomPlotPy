@@ -174,3 +174,7 @@ make html
 ```
 
 Note that Sphinx uses a single `:` as the field marker (not `@` in Javadoc) and a trailing `:` is required for a field and its options like `:type size: float` and `:rtype:`.
+
+## Work with C++
+
+Python packages can run with C++ code. Locate C++ sources on `src/module_name/` in a Python package directory, describe them as `ext_modules` in `setup.py`, and `setup.py` compiles and binds the C++ code into the distributed package. You can write unit tests for the C++ code with Makefile and a testing framework like Google Test as a standard C++ project.

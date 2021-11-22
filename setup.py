@@ -39,10 +39,10 @@ setup(
     ext_modules = [Extension(
        'nb_plot_streamlit.dist',
         sources=['src/dist/dist.cpp', 'src/dist/dist_impl.cpp'],
-        include_dirs=['/opt/boost_1_77_0/include'],
-        library_dirs=['/opt/boost_1_77_0/lib'],
-        runtime_library_dirs=['/opt/boost_1_77_0/lib'],
-        libraries=['boost_python39'],
+        include_dirs=['/opt/boost/include'],
+        library_dirs=['/opt/boost/lib'],
+        runtime_library_dirs=['/opt/boost/lib'],
+        libraries=['boost_python'],
     )],
 
     python_requires='>=3.9, <4',
