@@ -6,6 +6,7 @@ from typing import Tuple
 import numpy as np
 import pandas as pd
 from scipy.stats import nbinom
+from .dist import get_pdf
 
 
 class NbinomDist:
@@ -18,6 +19,7 @@ class NbinomDist:
     mu: float = 1.0    # derived from the size and prob parameter
     quantile: str = "0.99"  # passed by the UI
     max_x_plus_one: float = 1  # n for a range [0, n) as Xs
+    x_step = 1.0  # the step of arguments in density functions
 
     def __init__(self, initial_values: dict):
         """
@@ -66,6 +68,17 @@ class NbinomDist:
         self.size = self.initial_size
         self.prob = self.initial_prob
         self._update()
+
+    def set_x_step(self, step: float):
+        """
+        Update the step of arguments in density functions
+
+        :type step: float
+        :param step: the step of arguments in density functions
+        """
+
+        if step > 0.0:
+            self.x_step = step
 
     def update_size_prob(self, size: float, prob: float):
         """
@@ -158,7 +171,7 @@ class NbinomDist:
 
         return self.quantile
 
-    def _get_raw_data(self) -> Tuple[np.ndarray, np.ndarray]:
+    def _get_raw_data(self, x_step) -> Tuple[np.ndarray, np.ndarray]:
         """
         Calculate [0, bound) and their probability
 
@@ -166,8 +179,14 @@ class NbinomDist:
         :return: Returns a pair of xs and their probability
         """
 
-        xs: np.ndarray = np.arange(0, int(np.ceil(self.max_x_plus_one)), 1)
-        ys: np.ndarray = nbinom.pmf(xs, self.size, self.prob)
+        if x_step == 1.0:
+            xs: np.ndarray = np.arange(0, int(np.ceil(self.max_x_plus_one)), 1)
+            ys: np.ndarray = nbinom.pmf(xs, self.size, self.prob)
+        else:
+            ys = np.array(get_pdf(self.size, self.prob,
+                                  self.max_x_plus_one - 1.0, x_step))
+            xs = np.arange(0, len(ys), 1) * x_step
+
         return xs, ys
 
     def get_df(self) -> bytes:
@@ -178,7 +197,7 @@ class NbinomDist:
         :return: Returns a CSV table as a file-writable byte sequence
         """
 
-        xs, ys = self._get_raw_data()
+        xs, ys = self._get_raw_data(self.x_step)
         mat: np.ndarray = np.array([xs, ys]).T
         df: pd.DataFrame = pd.DataFrame(data=mat, columns=["x", "density"])
         return df.to_csv(index=False).encode("utf-8")
@@ -191,4 +210,4 @@ class NbinomDist:
         :return: Returns a pair of xs and their probability
         """
 
-        return self._get_raw_data()
+        return self._get_raw_data(self.x_step)

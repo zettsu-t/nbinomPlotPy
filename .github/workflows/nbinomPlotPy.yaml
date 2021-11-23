@@ -3,6 +3,7 @@ on:
     branches:
       - main
       - master
+      - cpp
   pull_request:
     branches:
       - main
@@ -32,6 +33,27 @@ jobs:
         run: |
           python -m pip install autopep8 check-manifest coverage flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
           python -m pip install chromedriver-binary-auto
+          sudo apt-get install -y build-essential python3-dev unzip wget
+          sudo wget https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.gz
+          sudo tar xzf boost_1_77_0.tar.gz
+
+      - name: Install Boost C++ libraries
+        working-directory: ./boost_1_77_0
+        run: |
+          sudo ./bootstrap.sh --with-libraries=python --with-python=python3.9 --with-python-version=3.9
+          sudo ./b2 install cxxflags=-fPIC address-model=64 threading=multi link=static runtime-link=shared variant=release -j4 --prefix=/opt/boost_1_77_0
+
+      - name: Make aliases
+        continue-on-error: true
+        run: |
+          test -d /opt/boost || ln -s /opt/boost_1_77_0 /opt/boost
+          test -f /opt/boost_1_77_0/lib/libboost_python.a || ln -s /opt/boost_1_77_0/lib/libboost_python*.a /opt/boost_1_77_0/lib/libboost_python.a
+
+      - name: Install Google Test
+        run: |
+          sudo wget https://github.com/google/googletest/archive/refs/heads/main.zip
+          sudo unzip main.zip
+          sudo mv googletest-* /opt/googletest
 
       - name: Install this package
         run: |
@@ -44,13 +66,18 @@ jobs:
 
       - name: Install Xvfb
         run: |
-          sudo apt-get install xvfb
+          sudo apt-get install -y xvfb
 
       - name: Run Xvfb
         continue-on-error: true
         run: |
           Xvfb -ac -screen 0 1024x768x24 :99 &
           sleep(10)
+
+      - name: Check C++ code
+        working-directory: ./src/dist
+        run: |
+          make test
 
       - name: Check backend
         run: |

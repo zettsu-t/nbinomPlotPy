@@ -10,7 +10,7 @@ import streamlit as st
 import yaml
 from .nbinom import NbinomDist
 
-
+X_STEP = 32.0
 DEFAULT_CSV_FILENAME = "density.csv"
 DEFAULT_CSV_MIME = "text/csv"
 
@@ -36,7 +36,9 @@ def draw():
         default_config: dict = read_default_config()
         max_nbinom_size: float = default_config["default_max_nbinom_size"]
         st.session_state["default_max_nbinom_size"] = max_nbinom_size
-        st.session_state["nb"] = NbinomDist(initial_values=default_config)
+        nbinom_dist = NbinomDist(initial_values=default_config)
+        nbinom_dist.set_x_step(1.0 / X_STEP)
+        st.session_state["nb"] = nbinom_dist
 
     st.title("Negative binomial distribution")
     state = st.session_state["nb"]
