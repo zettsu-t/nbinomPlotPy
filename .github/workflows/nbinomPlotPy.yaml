@@ -47,7 +47,7 @@ jobs:
         continue-on-error: true
         run: |
           test -d /opt/boost || ln -s /opt/boost_1_77_0 /opt/boost
-          test -f /opt/boost_1_77_0/lib/libboost_python.a || ln -s /opt/boost_1_77_0/lib/libboost_python39.a /opt/boost_1_77_0/lib/libboost_python.a
+          test -f /opt/boost_1_77_0/lib/libboost_python.a || ln -s /opt/boost_1_77_0/lib/libboost_python*.a /opt/boost_1_77_0/lib/libboost_python.a
 
       - name: Install Google Test
         run: |
