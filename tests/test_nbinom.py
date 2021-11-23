@@ -105,6 +105,22 @@ class TestNbinomDist(unittest.TestCase):
         self.check_data_frame(csv_string=nb_dist.get_df().decode('utf-8'),
                               n_row=expected_n_rows)
 
+    def test_fine_density_set(self):
+        """Test fine density set"""
+
+        params = {"initial_size": 4.0, "initial_prob": 0.25}
+        nb_dist = NbinomDist(initial_values=params)
+        nb_dist.set_quantile(quantile="0.99")
+
+        x_step = 1.0
+        for _ in range(3):
+            max_x = nb_dist.get_max_x_plus_one()
+            expected_n_rows = (max_x - 1) / x_step + 1
+            _, ys = nb_dist.get_data()
+            self.assertEqual(ys.shape[0], expected_n_rows)
+            x_step = x_step / 2.0
+            nb_dist.set_x_step(x_step)
+
     def test_set_quantile_another(self):
         """Test set_quantile and get_data with another parameter set"""
 

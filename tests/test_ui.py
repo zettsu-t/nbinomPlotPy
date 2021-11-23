@@ -196,7 +196,8 @@ class TestUI(unittest.TestCase):
     def change_quantile_set(self, driver, timeout, download_dir, snapshot_dir):
         """Change the quantile parameter"""
 
-        self.click_download(driver=driver, timeout=timeout, n_rows=34,
+        self.click_download(driver=driver, timeout=timeout,
+                            n_rows=(34 - 1) * nb_plot_streamlit.ui.X_STEP + 1,
                             download_dir=download_dir)
 
         change_quantile(driver=driver, timeout=timeout)
@@ -204,14 +205,16 @@ class TestUI(unittest.TestCase):
         snapshot_filename = os.path.join(
             snapshot_dir, SNAPSHOT_FILENAME_QUANTILE2)
         driver.save_screenshot(snapshot_filename)
-        self.click_download(driver=driver, timeout=timeout, n_rows=44,
+        self.click_download(driver=driver, timeout=timeout,
+                            n_rows=(44 - 1) * nb_plot_streamlit.ui.X_STEP + 1,
                             download_dir=download_dir)
 
         change_quantile(driver=driver, timeout=timeout)
         snapshot_filename = os.path.join(
             snapshot_dir, SNAPSHOT_FILENAME_QUANTILE3)
         driver.save_screenshot(snapshot_filename)
-        self.click_download(driver=driver, timeout=timeout, n_rows=54,
+        self.click_download(driver=driver, timeout=timeout,
+                            n_rows=(54 - 1) * nb_plot_streamlit.ui.X_STEP + 1,
                             download_dir=download_dir)
 
     def change_size(self, driver, timeout):

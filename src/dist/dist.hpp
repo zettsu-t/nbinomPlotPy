@@ -3,7 +3,7 @@
 namespace nbinomPlotPy {
     using RealType = double;
     using Density = std::vector<RealType>;
-    extern Density get_pdf(RealType size, RealType prob, RealType quantile, RealType step);
+    extern Density get_pdf(RealType size, RealType prob, RealType upper, RealType step);
 }
 
 /*
