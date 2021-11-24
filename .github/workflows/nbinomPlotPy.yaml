@@ -91,7 +91,6 @@ jobs:
       - name: Check frontend
         run: |
           pytest tests/test_ui.py || pytest tests/test_ui.py || pytest tests/test_ui.py || pytest tests/test_ui.py
-          ps ux | grep firefox | awk '{print $2}' | xargs kill; pytest
 
       - name: Check Python code
         continue-on-error: true
