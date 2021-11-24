@@ -10,7 +10,7 @@ The goal of nbinomPlotPy is to show an example of how to build, test, and deploy
 
 ``` bash
 python setup.py bdist_wheel
-python -m pip install dist/nb_plot_streamlit-0.0.1-py3-none-any.whl
+python -m pip install dist/nb_plot_streamlit-0.0.1-cp39-cp39-linux_x86_64.whl
 ```
 
 or in debugging
@@ -112,6 +112,17 @@ export GITHUB_ACTIONS=1
 pytest
 ```
 
+Python packages can run with C++ code. Locate C++ sources on `src/module_name/` in a Python package directory, describe them as `ext_modules` in `setup.py`, and `setup.py` compiles and binds the C++ code into the distributed package.
+
+You can write unit tests for the C++ code with Makefile and a testing framework like Google Test as a standard C++ project.
+
+``` bash
+pushd .
+cd src/dist
+make test
+popd
+```
+
 ### Check code
 
 ``` bash
@@ -174,7 +185,3 @@ make html
 ```
 
 Note that Sphinx uses a single `:` as the field marker (not `@` in Javadoc) and a trailing `:` is required for a field and its options like `:type size: float` and `:rtype:`.
-
-## Work with C++
-
-Python packages can run with C++ code. Locate C++ sources on `src/module_name/` in a Python package directory, describe them as `ext_modules` in `setup.py`, and `setup.py` compiles and binds the C++ code into the distributed package. You can write unit tests for the C++ code with Makefile and a testing framework like Google Test as a standard C++ project.

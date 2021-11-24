@@ -1,5 +1,5 @@
 """
-Testing states of negative binomial distribution
+Testing C++ code
 """
 
 import unittest

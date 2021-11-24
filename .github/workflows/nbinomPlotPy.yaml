@@ -57,7 +57,12 @@ jobs:
 
       - name: Install this package
         run: |
-          python -m pip install .
+          python setup.py bdist_wheel
+          python -m pip install dist/*.whl
+
+      - name: Reinstall this package to measure coverage
+        run: |
+          python -m pip install -e .
 
       - name: Start Streamlit Server
         continue-on-error: true
@@ -86,6 +91,15 @@ jobs:
       - name: Check frontend
         run: |
           pytest tests/test_ui.py || pytest tests/test_ui.py || pytest tests/test_ui.py || pytest tests/test_ui.py
+          ps ux | grep firefox | awk '{print $2}' | xargs kill; pytest
+
+      - name: Check Python code
+        continue-on-error: true
+        run: |
+          pytest --cov=. --cov-report=html
+          flake8
+          pylint src/ tests/
+          mypy src/nb_plot_streamlit/*.py
 
       - name: Make documents
         run: |

@@ -4,7 +4,7 @@ https://github.com/pypa/sampleproject
 """
 
 from distutils.core import Extension
-from setuptools import setup, find_packages
+from setuptools import setup, Extension, Command, find_packages
 import pathlib
 
 
