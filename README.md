@@ -112,7 +112,9 @@ export GITHUB_ACTIONS=1
 pytest
 ```
 
-Python packages can run with C++ code. Locate C++ sources on `src/module_name/` in a Python package directory, describe them as `ext_modules` in `setup.py`, and `setup.py` compiles and binds the C++ code into the distributed package.
+### Run C++ tests and code
+
+Python packages can run with C++ code. Locate C++ sources on `src/module_name/` in a Python package directory, describe them as `ext_modules` in `setup.py`, and `setup.py` compiles and binds the C++ code into the distributed package. We use boost::math::negative_binomial_distribution, which is a continuous version to calculate the density of a negative binomial distribution, to draw smooth curves.
 
 You can write unit tests for the C++ code with Makefile and a testing framework like Google Test as a standard C++ project.
 
@@ -121,6 +123,37 @@ pushd .
 cd src/dist
 make test
 popd
+```
+
+You can run the C++ code on the Python REPL.
+
+``` bash
+cp libnb_plot_streamlit.so dist.so
+python
+```
+
+``` python
+from dist import get_pdf
+get_pdf(6.0, 0.75, 10.0, 1.0)
+# [0.177978515625, 0.2669677734375, ...
+```
+
+Instead of the bundled hand-written Makefile, let `cmake` generate configuration files for a build system.
+
+``` bash
+cd src/dist
+mkdir -p build
+cd build
+cmake ..
+```
+
+And execute `make` and run the C++ code.
+
+``` bash
+make
+make test
+cp libnb_plot_streamlit.so dist.so
+python
 ```
 
 ### Check code

@@ -33,7 +33,7 @@ jobs:
         run: |
           python -m pip install autopep8 check-manifest coverage flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
           python -m pip install chromedriver-binary-auto
-          sudo apt-get install -y build-essential python3-dev unzip wget
+          sudo apt-get install -y build-essential cmake python3-dev unzip wget
           sudo wget https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.gz
           sudo tar xzf boost_1_77_0.tar.gz
 
@@ -83,6 +83,7 @@ jobs:
         working-directory: ./src/dist
         run: |
           make test
+          mkdir -p build
 
       - name: Check backend
         run: |
@@ -92,13 +93,12 @@ jobs:
         run: |
           pytest tests/test_ui.py || pytest tests/test_ui.py || pytest tests/test_ui.py || pytest tests/test_ui.py
 
-      - name: Check Python code
-        continue-on-error: true
+      - name: Check cmake
+        working-directory: ./src/dist/build
         run: |
-          pytest --cov=. --cov-report=html
-          flake8
-          pylint src/ tests/
-          mypy src/nb_plot_streamlit/*.py
+          cmake ..
+          make
+          make test
 
       - name: Make documents
         run: |

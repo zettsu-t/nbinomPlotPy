@@ -1,6 +1,9 @@
 DIR_BOOST=/opt/boost
 DIR_GTEST=/opt/googletest/googletest
-DIR_PYTHON_HEADER=$(shell find /usr/include -type f -name "Python.h" | tail -1 | xargs dirname)
+
+DIR_PYTHON_TOP=$(shell python3-config --prefix)
+DIR_PYTHON_HEADER=$(shell find $(DIR_PYTHON_TOP) -type f -name "Python.h" | tail -1 | xargs dirname)
+DIR_PYTHON_LIB=$(shell find $(DIR_PYTHON_TOP) -type f -name "libpython3.so" | tail -1 | xargs dirname)
 
 GTEST_SOURCE=$(DIR_GTEST)/src/gtest-all.cc
 GTEST_OBJ=$(patsubst %.cc, %.o, $(notdir $(GTEST_SOURCE)))
@@ -32,11 +35,11 @@ OPT=-O2
 CPPFLAGS=-std=gnu++14 -Wall
 CPPFLAGS_PY=$(CPPFLAGS) -DPIC -shared -fPIC
 CPPFLAGS_TEST=$(CPPFLAGS)
-LIBPATH=$(addprefix -L, $(DIR_BOOST)/lib)
+LIBPATH=$(addprefix -L, $(DIR_BOOST)/lib $(DIR_PYTHON_LIB))
 LDFLAGS_PY=-DPIC -shared -fPIC
 LDFLAGS_TEST=
 LIBS_PY=-lboost_python
-LIBS_TEST=-lpthread -lboost_python
+LIBS_TEST=-lpthread -lpython3 -lboost_python
 
 .PHONY: all test clean
 
