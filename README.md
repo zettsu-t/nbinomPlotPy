@@ -144,7 +144,7 @@ Instead of the bundled hand-written Makefile, let `cmake` generate configuration
 cd src/dist
 mkdir -p build
 cd build
-cmake ..
+cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -m find_libpython)
 ```
 
 And execute `make` and run the C++ code.
