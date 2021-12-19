@@ -407,7 +407,7 @@ class TestUI(unittest.TestCase):
             timeout = 60
         else:
             timeout = 90
-        url = "http://localhost:8501"
+        url = "http://127.0.0.1:8501"
         with tempfile.TemporaryDirectory() as temp_dir:
             snapshot_dir = SNAPSHOT_DIR
             os.makedirs(snapshot_dir, exist_ok=True)
