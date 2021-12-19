@@ -40,6 +40,7 @@ def draw():
         nbinom_dist.set_x_step(1.0 / X_STEP)
         st.session_state["nb"] = nbinom_dist
 
+    st.set_page_config(page_title="nbPlot")
     st.title("Negative binomial distribution")
     state = st.session_state["nb"]
 

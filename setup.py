@@ -63,7 +63,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'sample=sample:main',
+            'nb_plot_streamlit=nb_plot_streamlit.cli:main',
         ],
     },
 

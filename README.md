@@ -43,6 +43,12 @@ streamlit run launcher/launch.py
 
 and you can access the nbinomPlotPy app at <http://example.com:8501/>. Note that you have to replace the URL with an actual server.
 
+A command installed with this package does the same thing.
+
+``` bash
+nb_plot_streamlit
+```
+
 The attached `Dockerfile`s and `docker-compose.yml` come in handy to make a Docker container to build, test, and run the Streamlit app. See [an introduction to use Python Package Template Project](https://github.com/zettsu-t/create-py-package) for more details.
 
 ``` bash
@@ -89,6 +95,7 @@ yes "" | streamlit run launcher/launch.py &
 # Wait until the Streamlit server is ready
 
 # Run as a user, not as root
+# su jovyan
 unset USE_CHROME
 export USE_HEADLESS_BROWSER=1
 unset GITHUB_ACTIONS
@@ -159,8 +166,8 @@ python
 ### Check code
 
 ``` bash
-flake8
-pylint src/ tests/
+flake8 src/nb_plot_streamlit/ tests/
+pylint src/nb_plot_streamlit/ tests/
 mypy src/nb_plot_streamlit/*.py
 pytest --cov=.
 pytest --cov=. --cov-report=html
