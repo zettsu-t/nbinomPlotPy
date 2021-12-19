@@ -68,8 +68,6 @@ jobs:
         continue-on-error: true
         run: |
           yes "" | streamlit run launcher/launch.py &
-          ps aux
-          netstat -l
 
       - name: Install Xvfb
         run: |
@@ -80,6 +78,9 @@ jobs:
         run: |
           Xvfb -ac -screen 0 1024x768x24 :99 &
           sleep(10)
+          ps aux
+          netstat -l
+          wget http://localhost:8501
 
       - name: Check C++ code
         working-directory: ./src/dist
