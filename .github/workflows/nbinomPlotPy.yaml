@@ -18,6 +18,8 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       USE_HEADLESS_BROWSER: 1
       DISPLAY: :99
+    ports:
+      - 8501:8501
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -68,6 +70,7 @@ jobs:
         continue-on-error: true
         run: |
           yes "" | streamlit run launcher/launch.py &
+          ps aux
 
       - name: Install Xvfb
         run: |
