@@ -77,7 +77,10 @@ jobs:
         continue-on-error: true
         run: |
           Xvfb -ac -screen 0 1024x768x24 :99 &
-          sleep(10)
+
+      - name: List processes and ports
+        continue-on-error: true
+        run: |
           ps aux
           netstat -l
           wget http://localhost:8501
