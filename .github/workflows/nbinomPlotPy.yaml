@@ -24,13 +24,12 @@ jobs:
         with:
           python-version: '3.9'
           architecture: 'x64'
-      - uses: browser-actions/setup-firefox@latest
       - uses: browser-actions/setup-chrome@latest
-      - uses: browser-actions/setup-geckodriver@latest
       - uses: nanasess/setup-chromedriver@master
 
       - name: Install python package dependencies
         run: |
+          sudo apt-get install -y firefox firefox-geckodriver
           python -m pip install autopep8 check-manifest coverage find_libpython flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
           python -m pip install chromedriver-binary-auto
           sudo apt-get install -y build-essential cmake net-tools python3-dev unzip wget
