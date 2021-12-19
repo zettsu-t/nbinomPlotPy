@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver import ActionChains
-from selenium.webdriver.chrome.service import Service
+# from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
@@ -25,7 +25,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 # export USE_HEADLESS_BROWSER=1
 # and these tests below use a headless mode
-USE_CHROME = os.environ.get("USE_CHROME") is not None
+USE_CHROME = False
+# USE_CHROME = os.environ.get("USE_CHROME") is not None
 USE_HEADLESS_BROWSER = os.environ.get("USE_HEADLESS_BROWSER") is not None
 CHROME_DRIVER_PATH = "/usr/local/bin/chromedriver"
 
