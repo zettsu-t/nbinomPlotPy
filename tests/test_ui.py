@@ -90,11 +90,15 @@ def open_driver(mode, download_dir):
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-browser-side-navigation")
+        chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--disable-extensions")
         chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--disable-infobars")
         chrome_options.add_argument("start-maximized")
-        chrome_options.add_argument("disable-infobars")
+        chrome_options.add_argument("enable-automation")
+        chrome_options.add_argument("enable-features=NetworkServiceInProcess")
+        chrome_options.add_argument("disable-features=NetworkService")
         chrome_options.add_experimental_option("useAutomationExtension",
                                                False)
 
@@ -105,6 +109,7 @@ def open_driver(mode, download_dir):
 
         service = Service(CHROME_DRIVER_PATH)
         driver = webdriver.Chrome(service=service, options=chrome_options)
+        driver.implicitly_wait(10)
     else:
         options = Options()
         options.add_argument(mode)
@@ -119,6 +124,7 @@ def open_driver(mode, download_dir):
         options.set_preference("browser.helperApps.neverAsk.saveToDisk",
                                nb_plot_streamlit.ui.DEFAULT_CSV_MIME)
         driver = webdriver.Firefox(options=options)
+        driver.implicitly_wait(10)
 
     return driver
 
@@ -264,6 +270,7 @@ class TestUI(unittest.TestCase):
 
         old_element = driver.find_elements(By.XPATH, XPATH_MU)[0]
         update_element = driver.find_elements(By.XPATH, XPATH_UPDATE)[0]
+        time.sleep(10)
         update_element.click()
         wait.until(EC.staleness_of(old_element))
 
@@ -287,7 +294,9 @@ class TestUI(unittest.TestCase):
 
         updated_mu = "7.00"
         self.assertTrue(np.abs(expected_mu - float(updated_mu)) > 0.5)
+        time.sleep(10)
         driver.execute_script("arguments[0].value = '';", mu_element)
+
         mu_element.send_keys(updated_mu)
         mu_element.send_keys(Keys.RETURN)
         wait.until(EC.element_to_be_clickable((By.XPATH, XPATH_MU)))
@@ -423,6 +432,7 @@ class TestUI(unittest.TestCase):
         self.change_mu(driver=driver, timeout=timeout,
                        expected_mu=expected_mu)
 
+        time.sleep(1)
         self.update_by_mu(driver=driver, timeout=timeout)
         self.click_reset(driver=driver, timeout=timeout)
         driver.close()

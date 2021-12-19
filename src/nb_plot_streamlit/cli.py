@@ -12,7 +12,7 @@ def main():
     script = ["from nb_plot_streamlit.ui import draw\n", "draw()\n"]
     with tempfile.NamedTemporaryFile(mode="w", suffix=".py") as file:
         file.writelines(script)
-        command = f"yes | streamlit run {file.name}"
+        command = f"yes '' | streamlit run {file.name}"
         file.flush()
         return subprocess.run(command, shell=True, check=False)
 
