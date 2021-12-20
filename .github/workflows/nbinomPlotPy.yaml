@@ -29,11 +29,11 @@ jobs:
 
       - name: Install python package dependencies
         run: |
+          sudo apt-get install -y build-essential cmake net-tools protobuf-compiler python3-dev unzip wget xvfb
           sudo apt-get install -y firefox firefox-geckodriver
-          sudo python -m pip install autopep8 check-manifest coverage find_libpython flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
-          sudo python -m pip install --upgrade protobuf
-          sudo python -m pip install chromedriver-binary-auto
-          sudo apt-get install -y build-essential cmake net-tools protobuf-compiler python3-dev unzip wget
+          python -m pip install autopep8 check-manifest coverage find_libpython flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
+          python -m pip install --upgrade protobuf
+          python -m pip install chromedriver-binary-auto
           sudo wget https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.gz
           sudo tar xzf boost_1_77_0.tar.gz
 
@@ -57,12 +57,8 @@ jobs:
 
       - name: Install this package
         run: |
-          sudo python setup.py bdist_wheel
-          sudo python -m pip install dist/*.whl
-
-      - name: Install Xvfb
-        run: |
-          sudo apt-get install -y xvfb
+          python setup.py bdist_wheel
+          python -m pip install dist/*.whl
 
       - name: Run Xvfb
         continue-on-error: true
@@ -72,7 +68,7 @@ jobs:
       - name: Start Streamlit Server
         continue-on-error: true
         run: |
-          sudo yes "" | sudo streamlit run launcher/launch.py &
+          yes "" | streamlit run launcher/launch.py &
 
       - name: List processes and ports
         continue-on-error: true
@@ -84,30 +80,30 @@ jobs:
       - name: Check C++ code
         working-directory: ./src/dist
         run: |
-          sudo make test
-          sudo mkdir -p build
+          make test
+          mkdir -p build
 
       - name: Check cmake
         continue-on-error: true
         working-directory: ./src/dist/build
         run: |
-          sudo cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -m find_libpython)
-          sudo make
-          sudo make test
+          cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -m find_libpython)
+          make
+          make test
 
       - name: Check backend
         continue-on-error: true
         run: |
-          sudo pytest tests/test_nbinom.py
+          pytest tests/test_nbinom.py
 
       - name: Check frontend
         continue-on-error: true
         run: |
-          sudo pytest tests/test_ui.py || sudo pytest tests/test_ui.py || sudo pytest tests/test_ui.py || sudo pytest tests/test_ui.py
+          pytest tests/test_ui.py
 
       - name: Reinstall this package to measure coverage
         run: |
-          sudo python -m pip install -e .
+          python -m pip install -e .
 
       - name: Make documents
         run: |
