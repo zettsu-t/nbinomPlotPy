@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
+          python-version: '3.8'
           architecture: 'x64'
       - uses: browser-actions/setup-chrome@latest
       - uses: nanasess/setup-chromedriver@master
@@ -39,7 +39,7 @@ jobs:
       - name: Install Boost C++ libraries
         working-directory: ./boost_1_77_0
         run: |
-          sudo ./bootstrap.sh --with-libraries=python --with-python=python3.9 --with-python-version=3.9
+          sudo ./bootstrap.sh --with-libraries=python --with-python=python3.8 --with-python-version=3.8
           sudo ./b2 install cxxflags=-fPIC address-model=64 threading=multi link=static runtime-link=shared variant=release -j4 --prefix=/opt/boost_1_77_0
 
       - name: Make aliases

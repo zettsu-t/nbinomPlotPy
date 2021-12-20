@@ -27,6 +27,7 @@ setup(
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
         'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: C++',
@@ -45,7 +46,7 @@ setup(
         libraries=['boost_python'],
     )],
 
-    python_requires='>=3.9, <4',
+    python_requires='>=3.8, <4',
     install_requires=['matplotlib', 'numpy', 'pandas',
                       'scipy', 'streamlit', 'pyyaml'],
     extras_require={
