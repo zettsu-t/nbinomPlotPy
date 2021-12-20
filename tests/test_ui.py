@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver import ActionChains
-# from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
@@ -25,8 +25,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 # export USE_HEADLESS_BROWSER=1
 # and these tests below use a headless mode
-USE_CHROME = False
-# USE_CHROME = os.environ.get("USE_CHROME") is not None
+USE_CHROME = os.environ.get("USE_CHROME") is not None
 USE_HEADLESS_BROWSER = os.environ.get("USE_HEADLESS_BROWSER") is not None
 CHROME_DRIVER_PATH = "/usr/local/bin/chromedriver"
 
@@ -408,7 +407,7 @@ class TestUI(unittest.TestCase):
             timeout = 60
         else:
             timeout = 90
-        url = "http://127.0.0.1:8501"
+        url = "http://localhost:8501"
         with tempfile.TemporaryDirectory() as temp_dir:
             snapshot_dir = SNAPSHOT_DIR
             os.makedirs(snapshot_dir, exist_ok=True)
