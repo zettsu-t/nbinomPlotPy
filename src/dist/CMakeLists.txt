@@ -5,8 +5,8 @@ project(nb_plot_streamlit CXX)
 set(CMAKE_CXX_STANDARD 14)
 
 # Use Python
-find_package(Python 3.9 REQUIRED)
-find_package(PythonLibs 3.9 REQUIRED)
+find_package(Python 3.8 REQUIRED)
+find_package(PythonLibs 3.8 REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
 # Use Boost C++ libraries
