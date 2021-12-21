@@ -69,6 +69,8 @@ jobs:
         continue-on-error: true
         run: |
           yes "" | streamlit run launcher/launch.py &
+          sleep 10
+          ps ux | grep firefox | awk '{print $2}' | xargs kill
 
       - name: List processes and ports
         continue-on-error: true
