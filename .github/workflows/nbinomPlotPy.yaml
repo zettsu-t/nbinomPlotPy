@@ -29,7 +29,7 @@ jobs:
 
       - name: Install python package dependencies
         run: |
-          sudo apt-get install -y build-essential cmake net-tools protobuf-compiler python3-dev unzip wget xvfb
+          sudo apt-get install -y build-essential cmake net-tools protobuf-compiler python3-dev unzip wget
           sudo apt-get install -y firefox firefox-geckodriver
           python -m pip install autopep8 check-manifest coverage find_libpython flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
           python -m pip install --upgrade protobuf
@@ -59,11 +59,6 @@ jobs:
         run: |
           python setup.py bdist_wheel
           python -m pip install dist/*.whl
-
-      - name: Run Xvfb
-        continue-on-error: true
-        run: |
-          sudo Xvfb -ac -screen 0 1024x768x24 :99 &
 
       - name: Start Streamlit Server
         continue-on-error: true

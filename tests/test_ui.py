@@ -133,12 +133,14 @@ def open_connection(url, timeout, download_dir, snapshot_dir):
     """Open a page and select an item"""
 
     driver = None
-    alive, display = check_xvfb_alive("Xvfb")
-    if not alive:
-        raise ProcessLookupError("No Xvfb process found")
 
-    if os.environ.get("DISPLAY") is None and display is not None:
-        os.environ["DISPLAY"] = display
+    if os.environ.get("GITHUB_ACTIONS") is None:
+        alive, display = check_xvfb_alive("Xvfb")
+        if not alive:
+            raise ProcessLookupError("No Xvfb process found")
+
+        if os.environ.get("DISPLAY") is None and display is not None:
+            os.environ["DISPLAY"] = display
 
     if USE_HEADLESS_BROWSER:
         driver = open_driver(mode="--headless", download_dir=download_dir)
