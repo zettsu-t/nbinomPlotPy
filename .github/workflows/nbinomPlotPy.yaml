@@ -55,6 +55,11 @@ jobs:
           sudo unzip main.zip
           sudo mv googletest-* /opt/googletest
 
+      - name: Uninstall this xdg-open
+        continue-on-error: true
+        run: |
+          sudo apt-get remove -y xdg-utils
+
       - name: Install this package
         run: |
           python setup.py bdist_wheel
