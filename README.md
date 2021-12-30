@@ -121,6 +121,8 @@ export GITHUB_ACTIONS=1
 pytest
 ```
 
+An Xpath in the user interface is subject to change in future Streamlit versions. You should fix installed versions of Streamlit in `setup.py` and `Dockerfile`.
+
 ### Run C++ tests and code
 
 Python packages can run with C++ code. Locate C++ sources on `src/module_name/` in a Python package directory, describe them as `ext_modules` in `setup.py`, and `setup.py` compiles and binds the C++ code into the distributed package. We use boost::math::negative_binomial_distribution, which is a continuous version to calculate the density of a negative binomial distribution, to draw smooth curves.

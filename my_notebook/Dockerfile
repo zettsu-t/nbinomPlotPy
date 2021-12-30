@@ -26,7 +26,8 @@ RUN mv googletest-* /opt/googletest
 
 USER jovyan
 ENV PATH="/opt/conda/bin:${PATH}"
-RUN pip3 install autopep8 check-manifest coverage find_libpython flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme streamlit types-PyYAML types-requests
+RUN pip3 install autopep8 check-manifest coverage find_libpython flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme types-PyYAML types-requests
+RUN pip3 install streamlit==1.3.1
 RUN pip3 install chromedriver-binary-auto
 
 # Same as ports in docker-compose.yml

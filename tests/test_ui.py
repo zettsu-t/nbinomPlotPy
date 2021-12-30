@@ -29,6 +29,8 @@ USE_CHROME = os.environ.get("USE_CHROME") is not None
 USE_HEADLESS_BROWSER = os.environ.get("USE_HEADLESS_BROWSER") is not None
 CHROME_DRIVER_PATH = "/usr/local/bin/chromedriver"
 
+# Notice that XPATH may be subject to change in
+# an older and future version Streamlit
 XPATH_TOP = '/html/body/div/div[1]/div/div/div/div/'
 XPATH_SIDEBAR = XPATH_TOP + 'section[1]/div[1]/div[2]/div[1]/div/'
 XPATH_SIZE = XPATH_SIDEBAR + 'div[1]/div/div/div[1]/div/div'

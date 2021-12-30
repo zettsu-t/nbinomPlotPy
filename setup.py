@@ -49,7 +49,7 @@ setup(
 
     python_requires='>=3.8, <4',
     install_requires=['matplotlib', 'numpy', 'pandas',
-                      'scipy', 'streamlit', 'pyyaml'],
+                      'scipy', 'streamlit==1.3.1', 'pyyaml'],
     extras_require={
         'dev': ['autopep8', 'check-manifest', 'flake8', 'mypy', 'pep8',
                 'pipenv', 'pylint', 'py_pkg',
