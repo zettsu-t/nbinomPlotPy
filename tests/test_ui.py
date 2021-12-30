@@ -30,7 +30,7 @@ USE_HEADLESS_BROWSER = os.environ.get("USE_HEADLESS_BROWSER") is not None
 CHROME_DRIVER_PATH = "/usr/local/bin/chromedriver"
 
 XPATH_TOP = '/html/body/div/div[1]/div/div/div/div/'
-XPATH_SIDEBAR = XPATH_TOP + 'section[1]/div[1]/div[2]/div[1]/'
+XPATH_SIDEBAR = XPATH_TOP + 'section[1]/div[1]/div[2]/div[1]/div/'
 XPATH_SIZE = XPATH_SIDEBAR + 'div[1]/div/div/div[1]/div/div'
 XPATH_SIZE_VALUE = XPATH_SIZE + '/div'
 XPATH_PROB = XPATH_SIDEBAR + 'div[2]/div/div/div[1]/div/div'
@@ -42,10 +42,10 @@ XPATH_FIX_MU = XPATH_SIDEBAR + 'div[4]/div/div/label[2]'
 XPATH_UPDATE = XPATH_SIDEBAR + 'div[5]/div/button'
 XPATH_QUANTILES = XPATH_SIDEBAR + 'div[6]/div/div'
 XPATH_QUANTILE_INPUT = XPATH_QUANTILES + '/div/div[1]/div[2]/input'
-XPATH_CHART = XPATH_TOP + 'section[2]/div/div[1]/div[2]/div/div/div/img'
+XPATH_CHART = XPATH_TOP + 'section[2]/div/div[1]/div/div[2]/div/div/div/img'
 XPATH_RESET = XPATH_SIDEBAR + 'div[7]/div/button'
-XPATH_DOWNLOAD = XPATH_TOP + 'section[2]/div/div[1]/div[3]/div/button'
-XPATH_CHART_SRC = XPATH_TOP + 'section[2]/div/div[1]/div[1]'
+XPATH_DOWNLOAD = XPATH_TOP + 'section[2]/div/div[1]/div/div[3]/div/button'
+XPATH_CHART_SRC = XPATH_TOP + 'section[2]/div/div[1]/div[1]/div'
 
 EXPECTED_SNAPSHOTS = "tests/data/*.png"
 SNAPSHOT_DIR = "tests/snapshots"

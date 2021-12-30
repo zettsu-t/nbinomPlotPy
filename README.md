@@ -49,6 +49,8 @@ A command installed with this package does the same thing.
 nb_plot_streamlit
 ```
 
+Both require **config/config.yml** relative to their working directory.
+
 The attached `Dockerfile`s and `docker-compose.yml` come in handy to make a Docker container to build, test, and run the Streamlit app. See [an introduction to use Python Package Template Project](https://github.com/zettsu-t/create-py-package) for more details.
 
 ``` bash
