@@ -46,7 +46,6 @@ jobs:
           sudo ./b2 install cxxflags=-fPIC address-model=64 threading=multi link=static runtime-link=shared variant=release -j4 --prefix=/opt/boost_1_77_0
 
       - name: Make aliases
-        continue-on-error: true
         run: |
           sudo test -d /opt/boost || ln -s /opt/boost_1_77_0 /opt/boost
           sudo test -f /opt/boost_1_77_0/lib/libboost_python.a || ln -s /opt/boost_1_77_0/lib/libboost_python*.a /opt/boost_1_77_0/lib/libboost_python.a
@@ -58,7 +57,6 @@ jobs:
           sudo mv googletest-* /opt/googletest
 
       - name: Uninstall this xdg-open
-        continue-on-error: true
         run: |
           sudo apt-get remove -y xdg-utils
 
@@ -71,14 +69,12 @@ jobs:
         continue-on-error: true
         run: |
           yes "" | streamlit run launcher/launch.py &
-          sleep 10
-          ps ux | grep firefox | awk '{print $2}' | xargs kill
 
-      - name: List processes and ports
+      - name: Wait before Streamlit Server starts
         continue-on-error: true
         run: |
-          ps aux
-          netstat -l
+          sleep 10
+          ps ux | grep firefox | awk '{print $2}' | xargs kill
           wget http://localhost:8501
 
       - name: Check C++ code
@@ -88,7 +84,6 @@ jobs:
           mkdir -p build
 
       - name: Check cmake
-        continue-on-error: true
         working-directory: ./src/dist/build
         run: |
           cmake .. -DPYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") -DPYTHON_LIBRARY=$(python -m find_libpython)
@@ -96,12 +91,10 @@ jobs:
           make test
 
       - name: Check backend
-        continue-on-error: true
         run: |
           pytest tests/test_nbinom.py
 
       - name: Check frontend
-        continue-on-error: true
         run: |
           pytest tests/test_ui.py
 
