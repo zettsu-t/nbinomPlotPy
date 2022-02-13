@@ -229,3 +229,31 @@ make html
 ```
 
 Note that Sphinx uses a single `:` as the field marker (not `@` in Javadoc) and a trailing `:` is required for a field and its options like `:type size: float` and `:rtype:`.
+
+## Make documents of C++ implementation in this package
+
+First, run doxygen to create **Doxyfile**.
+
+``` bash
+mkdir -p docs
+cd docs
+doxygen -g
+```
+
+Change the INPUT parameter in **Doxyfile** to find .hpp files in this package.
+
+```
+INPUT                  = ../src/dist
+```
+
+A patch comes in handy to apply this difference above.
+
+``` bash
+patch < ../patch/Doxyfile.diff
+```
+
+Final run `doxygen` and you can find documents for .hpp files in `docs/html/index.html`.
+
+``` bash
+doxygen
+```
