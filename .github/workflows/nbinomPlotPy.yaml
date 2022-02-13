@@ -30,7 +30,7 @@ jobs:
 
       - name: Install python package dependencies
         run: |
-          sudo apt-get install -y build-essential cmake net-tools protobuf-compiler python3-dev unzip wget
+          sudo apt-get install -y build-essential cmake doxygen net-tools protobuf-compiler python3-dev unzip wget
           sudo apt-get install -y firefox
           python -m pip install autopep8 check-manifest coverage find_libpython flake8 matplotlib mypy numpy opencv-python pandas pep8 pipenv pylint pytest pytest-cov pyyaml py_pkg scipy seleniumbase sphinx sphinx_rtd_theme types-PyYAML types-requests
           python -m pip install streamlit==1.3.1
@@ -104,3 +104,9 @@ jobs:
           patch < patch/conf.py.diff
           patch < patch/index.rst.diff
           make html
+          mkdir -p docs
+          cd docs
+          doxygen -g
+          patch < ../patch/Doxyfile.diff
+          doxygen
+          cd ..
